@@ -1,0 +1,2567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>interview-prep-app — 30 Day MERN Sprint</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0d12;
+            --panel: #12151d;
+            --panel-2: #161a24;
+            --line: #232838;
+            --text: #d7dbe6;
+            --dim: #7b8299;
+            --accent: #5ee6c4;
+            --accent-dim: #2b6e5e;
+            --amber: #ffb454;
+            --red: #ff6b6b;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+        }
+
+        ::selection {
+            background: var(--accent-dim);
+            color: #fff;
+        }
+
+        .app {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: var(--panel);
+            border-right: 1px solid var(--line);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .brand {
+            padding: 18px 16px 14px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .brand .path {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--dim);
+            letter-spacing: .02em;
+        }
+
+        .brand .title {
+            font-family: var(--mono);
+            font-weight: 800;
+            font-size: 15px;
+            color: var(--accent);
+            margin-top: 4px;
+        }
+
+        .brand .sub {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--dim);
+            margin-top: 2px;
+        }
+
+        .progress-wrap {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .progress-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--dim);
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar {
+            height: 5px;
+            background: var(--panel-2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+            width: 0%;
+            transition: width .4s;
+        }
+
+        .tree {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .week-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            padding: 14px 16px 6px;
+        }
+
+        .day-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px;
+            cursor: pointer;
+            font-family: var(--mono);
+            font-size: 12.5px;
+            color: var(--dim);
+            border-left: 2px solid transparent;
+        }
+
+        .day-item:hover {
+            background: var(--panel-2);
+            color: var(--text);
+        }
+
+        .day-item.active {
+            background: var(--panel-2);
+            color: var(--accent);
+            border-left: 2px solid var(--accent);
+        }
+
+        .day-item .check {
+            width: 13px;
+            height: 13px;
+            border-radius: 3px;
+            border: 1px solid var(--line);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+        }
+
+        .day-item.done .check {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #04140f;
+        }
+
+        .day-item .num {
+            opacity: .6;
+        }
+
+        /* MAIN */
+        .main {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .topbar {
+            padding: 16px 28px;
+            border-bottom: 1px solid var(--line);
+            background: var(--panel);
+        }
+
+        .topbar .breadcrumb {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--dim);
+        }
+
+        .topbar .breadcrumb span {
+            color: var(--accent);
+        }
+
+        .topbar h1 {
+            font-family: var(--mono);
+            font-size: 22px;
+            margin: 6px 0 4px;
+            font-weight: 800;
+        }
+
+        .topbar h1 .cursor {
+            display: inline-block;
+            width: 9px;
+            height: 20px;
+            background: var(--accent);
+            margin-left: 6px;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .topbar .tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .tag {
+            font-family: var(--mono);
+            font-size: 10.5px;
+            padding: 3px 8px;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            color: var(--dim);
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 28px 60px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media(max-width:1080px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-family: var(--mono);
+            font-size: 13px;
+            color: var(--amber);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin: 0 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card h2::before {
+            content: '//';
+            color: var(--dim);
+        }
+
+        .card p {
+            font-size: 14px;
+            line-height: 1.65;
+            color: var(--text);
+            margin: 0 0 10px;
+        }
+
+        .card ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .card li {
+            font-size: 13.5px;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .card li.topic {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 6px;
+            font-family: var(--mono);
+            font-size: 12.5px;
+        }
+
+        .card li.topic::before {
+            content: '▸ ';
+            color: var(--accent);
+        }
+
+        .q-item {
+            border-left: 2px solid var(--line);
+            padding: 8px 0 8px 12px;
+            margin-bottom: 4px;
+            font-size: 13.5px;
+        }
+
+        .q-item b {
+            color: var(--accent);
+            font-family: var(--mono);
+            font-size: 11px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* CODE PANEL */
+        .code-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: var(--panel-2);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .code-toolbar .fname {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--dim);
+        }
+
+        .code-toolbar .fname span {
+            color: var(--text);
+        }
+
+        .btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            font-family: var(--mono);
+            font-size: 12px;
+            border: 1px solid var(--line);
+            background: var(--panel);
+            color: var(--text);
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: .15s;
+        }
+
+        button:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        button.run {
+            background: var(--accent);
+            color: #04140f;
+            border-color: var(--accent);
+            font-weight: 700;
+        }
+
+        button.run:hover {
+            background: #7ff0d5;
+            color: #04140f;
+        }
+
+        button.reset {
+            color: var(--dim);
+        }
+
+        textarea.editor {
+            width: 100%;
+            min-height: 260px;
+            background: #0d0f16;
+            color: #e6e9f2;
+            border: none;
+            outline: none;
+            padding: 14px 16px;
+            font-family: var(--mono);
+            font-size: 13px;
+            line-height: 1.6;
+            resize: vertical;
+            tab-size: 2;
+        }
+
+        .console {
+            border-top: 1px solid var(--line);
+            background: #07080c;
+        }
+
+        .console-head {
+            padding: 8px 14px;
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--dim);
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .console-body {
+            padding: 12px 14px;
+            font-family: var(--mono);
+            font-size: 12.5px;
+            line-height: 1.7;
+            min-height: 70px;
+            max-height: 220px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .console-body .ok {
+            color: var(--accent);
+        }
+
+        .console-body .err {
+            color: var(--red);
+        }
+
+        .console-body .muted {
+            color: var(--dim);
+        }
+
+        .nav-foot {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0 0;
+        }
+
+        .nav-foot button {
+            padding: 10px 18px;
+        }
+
+        .footer-note {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--dim);
+            text-align: center;
+            padding: 18px;
+            border-top: 1px solid var(--line);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--line);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* LOCK ICON */
+        .day-item .lock {
+            opacity: .4;
+            margin-left: 2px;
+            font-size: 10px;
+        }
+
+        .day-item.locked {
+            opacity: .55;
+        }
+
+        button.passed-btn {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: #eafff8;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 5, 8, .72);
+            backdrop-filter: blur(2px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            padding: 24px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 680px;
+            max-height: 88vh;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--line);
+            background: var(--panel-2);
+        }
+
+        .modal-eyebrow {
+            font-family: var(--mono);
+            font-size: 10.5px;
+            color: var(--amber);
+            letter-spacing: .08em;
+        }
+
+        .modal-head h3 {
+            font-family: var(--mono);
+            font-size: 17px;
+            margin: 4px 0 0;
+        }
+
+        .modal-close {
+            border: none;
+            background: transparent;
+            color: var(--dim);
+            font-size: 16px;
+            padding: 2px 6px;
+        }
+
+        .modal-close:hover {
+            color: var(--red);
+        }
+
+        .modal-body {
+            overflow-y: auto;
+            padding: 18px 20px;
+            flex: 1;
+        }
+
+        .modal-foot {
+            border-top: 1px solid var(--line);
+            padding: 14px 20px;
+            background: var(--panel-2);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .mcq-block {
+            margin-bottom: 18px;
+            padding-bottom: 16px;
+            border-bottom: 1px dashed var(--line);
+        }
+
+        .mcq-block:last-of-type {
+            border-bottom: none;
+        }
+
+        .mcq-q {
+            font-family: var(--mono);
+            font-size: 12.5px;
+            color: var(--dim);
+            margin-bottom: 4px;
+        }
+
+        .mcq-q b {
+            color: var(--text);
+            font-size: 13.5px;
+            font-family: var(--sans);
+        }
+
+        .mcq-opts {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .mcq-opt {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 10px;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .mcq-opt:hover {
+            border-color: var(--accent-dim);
+        }
+
+        .mcq-opt input {
+            margin-top: 2px;
+            accent-color: var(--accent);
+        }
+
+        .mcq-opt.correct {
+            border-color: var(--accent);
+            background: rgba(94, 230, 196, .08);
+        }
+
+        .mcq-opt.wrong {
+            border-color: var(--red);
+            background: rgba(255, 107, 107, .08);
+        }
+
+        .coding-block .prompt {
+            font-size: 13.5px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .coding-block textarea {
+            width: 100%;
+            min-height: 160px;
+            background: #0d0f16;
+            color: #e6e9f2;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: var(--mono);
+            font-size: 12.5px;
+            line-height: 1.6;
+            resize: vertical;
+            tab-size: 2;
+        }
+
+        .test-results {
+            margin-top: 10px;
+            font-family: var(--mono);
+            font-size: 12px;
+        }
+
+        .test-row {
+            padding: 6px 8px;
+            border-radius: 5px;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .test-row.pass {
+            background: rgba(94, 230, 196, .08);
+            color: var(--accent);
+        }
+
+        .test-row.fail {
+            background: rgba(255, 107, 107, .08);
+            color: var(--red);
+        }
+
+        .score-banner {
+            padding: 12px 14px;
+            border-radius: 7px;
+            font-family: var(--mono);
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .score-banner.pass {
+            background: rgba(94, 230, 196, .1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .score-banner.fail {
+            background: rgba(255, 107, 107, .1);
+            border: 1px solid var(--red);
+            color: var(--red);
+        }
+
+        .score-banner .big {
+            font-size: 20px;
+            font-weight: 800;
+            display: block;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="path">~/prep</div>
+                <div class="title">interview-prep-app</div>
+                <div class="sub">30-day MERN sprint · Azizur</div>
+            </div>
+            <div class="progress-wrap">
+                <div class="progress-label"><span>PROGRESS</span><span id="progress-text">0 / 30</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+            <div class="tree" id="tree"></div>
+        </aside>
+
+        <main class="main">
+            <div class="topbar">
+                <div class="breadcrumb">week <span id="bc-week">1</span> / day-<span id="bc-day">01</span>.js</div>
+                <h1 id="day-title">Loading<span class="cursor"></span></h1>
+                <div class="tags" id="day-tags"></div>
+            </div>
+
+            <div class="content">
+                <div class="grid">
+                    <div>
+                        <div class="card">
+                            <h2>mission</h2>
+                            <p id="day-mission"></p>
+                            <ul id="day-topics"></ul>
+                        </div>
+                        <div class="card">
+                            <h2>concept notes</h2>
+                            <p id="day-notes"></p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card">
+                            <h2>interview questions</h2>
+                            <div id="day-questions"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-card">
+                    <div class="code-toolbar">
+                        <div class="fname">exercise: <span id="task-name"></span></div>
+                        <div class="btns">
+                            <button class="reset" id="resetBtn">↺ reset</button>
+                            <button class="run" id="runBtn">▶ run</button>
+                        </div>
+                    </div>
+                    <textarea class="editor" id="editor" spellcheck="false"></textarea>
+                    <div class="console">
+                        <div class="console-head"><span>console output</span><span id="run-status"
+                                class="muted">idle</span></div>
+                        <div class="console-body" id="console-body"><span class="muted">Press "run" to execute this
+                                snippet. console.log() output shows up here.</span></div>
+                    </div>
+                </div>
+
+                <div class="nav-foot">
+                    <button id="prevBtn">← previous day</button>
+                    <button id="markBtn">take day test ✓</button>
+                    <button id="nextBtn">next day →</button>
+                </div>
+            </div>
+
+            <div class="footer-note">JS/TS/React runs live in-browser · Node/Mongo/SQL/Docker days are
+                predict-the-output & design drills · your work autosaves per day in this tab · pass each day's test at
+                80%+ to unlock the next</div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-head">
+                <div>
+                    <div class="modal-eyebrow">DAY <span id="modal-day-num"></span> CHECKPOINT · 80%+ REQUIRED TO
+                        ADVANCE</div>
+                    <h3 id="modal-title"></h3>
+                </div>
+                <button class="modal-close" id="modalCloseBtn">✕</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-foot">
+                <div id="modal-score-area"></div>
+                <div class="modal-actions" id="modal-actions"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WEEKS = [
+            { label: "Week 1 — JavaScript & TypeScript", range: [1, 7] },
+            { label: "Week 2 — React & Next.js", range: [8, 14] },
+            { label: "Week 3 — Node, Express & MongoDB", range: [15, 21] },
+            { label: "Week 4 — Full-Stack, Systems & Interviews", range: [22, 30] },
+        ];
+
+        const DAYS = [
+            {
+                d: 1, title: "JavaScript Fundamentals", tags: ["scope", "hoisting", "coercion"],
+                mission: "Rebuild your feel for the primitives before touching frameworks. Every framework bug you've debugged eventually traces back to one of these rules.",
+                topics: ["var vs let vs const", "Hoisting & the Temporal Dead Zone", "Primitive vs reference types", "== vs ===, type coercion", "null vs undefined, truthy/falsy", "this binding"],
+                notes: "Reference types (objects, arrays, functions) are copied by reference — assigning or passing them shares the same underlying data. Primitives are copied by value. This single fact explains most 'why did my state mutate unexpectedly' bugs in React.",
+                questions: [["What is hoisting?", "var declarations and function declarations are hoisted to the top of their scope; let/const are hoisted but stay in the TDZ until the line executes."],
+                ["Difference between let, const, var?", "Scope (function vs block), reassignment rules, and TDZ behavior."],
+                ["What happens when you copy an object?", "You copy the reference, not the data — both variables point at the same object."],
+                ["Shallow vs deep copy?", "Shallow copies one level (spread, Object.assign); nested objects still share references. Deep copy clones recursively."]],
+                task: "Predict the output, then verify by running it.",
+                code: `// Predict the output before running, then click Run.
+let a = { count: 1 };
+let b = a;
+b.count = 99;
+console.log(a.count); // ?
+
+const arr1 = [1, 2, 3];
+const arr2 = arr1;
+arr2.push(4);
+console.log(arr1.length); // ?
+
+console.log(typeof null);       // ?
+console.log(null == undefined); // ?
+console.log(null === undefined);// ?
+console.log(0 == "0");          // ?
+console.log(0 === "0");         // ?
+`},
+
+            {
+                d: 2, title: "Functions & Closures", tags: ["closures", "HOF", "currying"],
+                mission: "Closures are the single most tested MERN concept after async/await. You must be able to produce a real example from your own code, not the textbook definition.",
+                topics: ["Function declaration vs expression", "Arrow functions & lexical this", "Higher-order functions", "Closures & lexical scope", "IIFE", "Currying"],
+                notes: "A closure is a function bundled with references to its surrounding state. In your own apps: a debounced search handler that 'remembers' a timer id, or a factory that returns a configured API client, both rely on closures.",
+                questions: [["What is a closure, with a real example from your work?", "Not the dictionary answer — describe a debounce/throttle util, a memoized fetcher, or a counter factory you actually built."],
+                ["Why do closures cause the classic 'stale value in a loop' bug?", "var is function-scoped, so all callbacks share the same final value; let creates a new binding per iteration."],
+                ["When would you use currying in a real codebase?", "Partial application, e.g. a logger(level)(message) or building reusable validators."]],
+                task: "Implement a counter factory using a closure, then fix the classic loop bug.",
+                code: `function makeCounter() {
+  let count = 0;
+  return function () {
+    count += 1;
+    return count;
+  };
+}
+const counter = makeCounter();
+console.log(counter()); // 1
+console.log(counter()); // 2
+
+// Classic bug: fix this so it logs 0,1,2 instead of 3,3,3
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log("var loop:", i), 0);
+}
+
+// Your fix using let (or an IIFE):
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log("let loop:", i), 0);
+}
+`},
+
+            {
+                d: 3, title: "Async JavaScript", tags: ["promises", "async/await", "Promise.all"],
+                mission: "Callback → Promise → async/await → Event Loop. This chain is the backbone of every API call your MERN apps make.",
+                topics: ["Promise states (pending/fulfilled/rejected)", "Promise.all / allSettled / race / any", "try/catch with async/await", "Sequential vs parallel requests", "Microtasks vs macrotasks"],
+                notes: "Promise.all fires all requests at once and waits for the slowest — great when requests are independent (e.g. fetching a user and their orders in parallel). Sequential awaits are only needed when one request depends on the previous result.",
+                questions: [["Why does Promise.all() make independent requests faster?", "Because the requests start concurrently instead of waiting for each other; total time ≈ the slowest single request, not the sum."],
+                ["Promise.all vs Promise.allSettled?", "all rejects immediately on the first failure; allSettled waits for everything and reports each result's status."],
+                ["Microtasks vs macrotasks?", "Promise callbacks run as microtasks and drain before the next macrotask (setTimeout, I/O) runs."]],
+                task: "Compare sequential vs parallel timing, and handle a mixed-success batch with allSettled.",
+                code: `function fakeFetch(name, ms) {
+  return new Promise((resolve) =>
+    setTimeout(() => resolve(name + " done"), ms)
+  );
+}
+
+async function sequential() {
+  const start = Date.now();
+  const a = await fakeFetch("A", 300);
+  const b = await fakeFetch("B", 300);
+  console.log("sequential:", Date.now() - start, "ms ->", a, b);
+}
+
+async function parallel() {
+  const start = Date.now();
+  const [a, b] = await Promise.all([fakeFetch("A", 300), fakeFetch("B", 300)]);
+  console.log("parallel:", Date.now() - start, "ms ->", a, b);
+}
+
+async function main() {
+  await sequential();
+  await parallel();
+
+  const results = await Promise.allSettled([
+    fakeFetch("ok-1", 100),
+    Promise.reject("boom"),
+    fakeFetch("ok-2", 150),
+  ]);
+  console.log(results);
+}
+main();
+`},
+
+            {
+                d: 4, title: "The Event Loop", tags: ["call stack", "microtasks", "node apis"],
+                mission: "Interviewers love asking you to predict console.log ordering. Master the call stack → queue → microtask → event loop pipeline today.",
+                topics: ["Call stack", "Web/Node APIs", "Callback queue", "Microtask queue", "Execution order rules"],
+                notes: "Synchronous code always runs first. Then all queued microtasks (Promise callbacks) drain completely. Only after the microtask queue is empty does the event loop pick up the next macrotask (setTimeout, setInterval, I/O).",
+                questions: [["Predict this order: sync code, setTimeout(0), Promise.resolve().then()", "Sync code first, then all microtasks (Promises), then macrotasks (setTimeout) — regardless of the 0ms delay."],
+                ["Why can setTimeout(fn, 0) still run after Promise callbacks?", "Because it's a macrotask; the engine always fully drains the microtask queue before the next macrotask."]],
+                task: "Predict the exact print order before running.",
+                code: `console.log("A");
+
+setTimeout(() => console.log("B"), 0);
+
+Promise.resolve().then(() => console.log("C"));
+
+console.log("D");
+
+Promise.resolve().then(() => {
+  console.log("E");
+  setTimeout(() => console.log("F"), 0);
+});
+
+// Write your predicted order as a comment, then run to check:
+// predicted: ?
+`},
+
+            {
+                d: 5, title: "Advanced JavaScript", tags: ["prototypes", "classes", "perf utils"],
+                mission: "Implement the utilities you've used from libraries at least once from scratch — debounce and throttle come up constantly in frontend interviews.",
+                topics: ["Prototype chain", "Classes & inheritance", "Destructuring, spread/rest", "map/filter/reduce", "Debounce", "Throttle", "Memoization"],
+                notes: "Debounce delays execution until input goes quiet (search-as-you-type). Throttle guarantees execution at most once per interval (scroll/resize handlers). Confusing the two is a very common interview slip.",
+                questions: [["Debounce vs throttle — when would you use each?", "Debounce for search inputs / autosave; throttle for scroll, resize, or drag handlers that must fire at a steady rate."],
+                ["How does prototypal inheritance differ from classical inheritance?", "Objects delegate to a prototype object at lookup time rather than copying a class definition."]],
+                task: "Implement debounce() and memoize() from scratch.",
+                code: `function debounce(fn, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+function memoize(fn) {
+  const cache = new Map();
+  return function (...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) {
+      console.log("cache hit for", key);
+      return cache.get(key);
+    }
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+}
+
+const slowSquare = (n) => {
+  console.log("computing square of", n);
+  return n * n;
+};
+const fastSquare = memoize(slowSquare);
+console.log(fastSquare(4));
+console.log(fastSquare(4)); // should hit cache, not recompute
+
+const log = debounce((msg) => console.log("debounced:", msg), 200);
+log("call 1");
+log("call 2");
+log("call 3"); // only this one should actually log, after 200ms
+`},
+
+            {
+                d: 6, title: "TypeScript for API Shapes", tags: ["generics", "utility types", "narrowing"],
+                mission: "You already use TypeScript — today is about designing types for real API shapes: User, Product, Order, and generic wrappers like ApiResponse<T>.",
+                topics: ["type vs interface", "Generics", "Union & intersection types", "Partial / Pick / Omit / Record", "Type narrowing & guards", "unknown vs any"],
+                notes: "A generic ApiResponse<T> = { data: T; error: string | null; loading: boolean } lets one type describe every endpoint's response shape. Pick/Omit let you derive a CreateUserInput type from a full User type without duplicating fields.",
+                questions: [["type vs interface — when do you choose one over the other?", "interface is extendable/mergeable and reads well for object shapes; type is required for unions, tuples, and mapped types."],
+                ["unknown vs any?", "unknown forces a type check/narrowing before use, preserving type safety; any opts out of checking entirely."],
+                ["How would you type a paginated API response generically?", "PaginatedResponse<T> = { items: T[]; page: number; totalPages: number }."]],
+                task: "Design generic types for a small API, this runs as plain JS so remove the type annotations mentally as you check the logic — or paste into a TS playground for full checking.",
+                code: `// Conceptual TS design (runs here as plain JS logic check):
+// type ApiResponse<T> = { data: T | null; error: string | null; loading: boolean };
+// type PaginatedResponse<T> = { items: T[]; page: number; totalPages: number };
+// type CreateUserInput = Omit<User, "id" | "createdAt">;
+
+function makeResponse(data, error) {
+  return { data: data ?? null, error: error ?? null, loading: false };
+}
+
+function paginate(items, page, pageSize) {
+  const start = (page - 1) * pageSize;
+  const slice = items.slice(start, start + pageSize);
+  return { items: slice, page, totalPages: Math.ceil(items.length / pageSize) };
+}
+
+const users = Array.from({ length: 23 }, (_, i) => ({ id: i + 1, name: "User " + (i + 1) }));
+console.log(paginate(users, 2, 10));
+console.log(makeResponse(users[0], null));
+`},
+
+            {
+                d: 7, title: "Week 1 Mock Interview", tags: ["mock", "review"],
+                mission: "No tutorials today. Answer 10 rapid questions aloud, then solve the two problems below without hints.",
+                topics: ["Rapid-fire JS Q&A", "Small live-coding problems", "Explain-aloud practice"],
+                notes: "Say your answer out loud before checking it. The goal is fluency under mild pressure, not just recognition when you read the answer.",
+                questions: [["Explain event delegation.", "Attach one listener to a parent and use e.target to handle events from many children — fewer listeners, works for dynamically added elements."],
+                ["What's the difference between call, apply, and bind?", "call/apply invoke immediately with a given this (apply takes an args array); bind returns a new function with this permanently set."],
+                ["What is the difference between deep equality and reference equality?", "Reference equality (===) checks identity; deep equality compares structure/values recursively (e.g. lodash isEqual)."]],
+                task: "Implement a simple deep-equal check and a basic event-emitter — two very common warm-up problems.",
+                code: `function deepEqual(a, b) {
+  if (a === b) return true;
+  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+  const keysA = Object.keys(a), keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  return keysA.every((key) => deepEqual(a[key], b[key]));
+}
+
+console.log(deepEqual({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 2 } })); // true
+console.log(deepEqual({ a: 1 }, { a: 2 })); // false
+
+class EventEmitter {
+  constructor() { this.listeners = {}; }
+  on(event, cb) {
+    (this.listeners[event] ??= []).push(cb);
+  }
+  emit(event, ...args) {
+    (this.listeners[event] || []).forEach((cb) => cb(...args));
+  }
+}
+const bus = new EventEmitter();
+bus.on("order:created", (id) => console.log("Order created:", id));
+bus.emit("order:created", 42);
+`},
+
+            {
+                d: 8, title: "React Fundamentals", tags: ["virtual dom", "re-renders", "props/state"],
+                mission: "Revisit what actually triggers a re-render — this is the question that separates 'used React' from 'understands React'.",
+                topics: ["Virtual DOM & reconciliation", "Components, props, state", "Controlled vs uncontrolled inputs", "Keys in lists", "Conditional rendering"],
+                notes: "A component re-renders when its state changes, its parent re-renders, or its context value changes — never merely because a plain variable changed. Keys let React match array items across renders instead of re-mounting everything.",
+                questions: [["What causes a React component to re-render?", "State updates (its own or a parent's), context changes, or prop changes propagating from a parent re-render."],
+                ["Does changing a normal variable cause a re-render?", "No — only state (via useState/useReducer) or context updates schedule a re-render."],
+                ["Why do list items need stable keys?", "So React can match items across renders by identity rather than index, avoiding wrong DOM reuse and lost input state."]],
+                task: "Trace through this render-logic simulation (no real DOM, just the decision logic) and predict which renders happen.",
+                code: `// Simplified simulation of React's "should this re-render" decision
+function shouldRerender(prevState, nextState) {
+  return !Object.is(prevState, nextState);
+}
+
+let state = { count: 0 };
+console.log("initial render");
+
+function setState(next) {
+  if (shouldRerender(state, next)) {
+    state = next;
+    console.log("re-render triggered, count =", state.count);
+  } else {
+    console.log("bailed out, same reference");
+  }
+}
+
+setState({ count: 0 });     // new object, same values -> still re-renders (new reference)
+setState(state);            // same reference -> bails out
+setState({ ...state, count: state.count + 1 }); // re-renders
+`},
+
+            {
+                d: 9, title: "Hooks Deep Dive", tags: ["useEffect", "useMemo", "useRef"],
+                mission: "useEffect is the hook most likely to be picked apart in an interview. Know the dependency array, cleanup, and why it double-fires in dev mode.",
+                topics: ["useState / useEffect / useMemo / useCallback / useRef / useContext", "Dependency arrays", "Cleanup functions", "Race conditions in effects", "Why effects run twice in dev (Strict Mode)"],
+                notes: "Strict Mode intentionally mounts, unmounts, and remounts components in development to surface effects that aren't properly cleaned up — it's a bug detector, not a bug.",
+                questions: [["Why does useEffect run twice in development?", "React Strict Mode double-invokes effects to help you catch missing cleanup logic; it does not happen in production builds."],
+                ["How do you avoid a race condition in a data-fetching effect?", "Track a 'cancelled' flag or AbortController in the cleanup function so a stale response is ignored if the component updates before it resolves."],
+                ["When would you reach for useRef instead of useState?", "When you need to persist a mutable value across renders without triggering a re-render — e.g. a timer id or a previous-value tracker."]],
+                task: "Simulate a race condition in a fetch effect and fix it with a cancellation flag.",
+                code: `function fakeFetchUser(id, delay) {
+  return new Promise((resolve) => setTimeout(() => resolve({ id, name: "User " + id }), delay));
+}
+
+// BUGGY: no cancellation - a slow first request can overwrite a fast second one
+async function buggyEffect(id, setUser) {
+  const user = await fakeFetchUser(id, id === 1 ? 500 : 100);
+  setUser(user); // may resolve out of order!
+}
+
+// FIXED: ignore stale responses
+function fixedEffect(id, setUser) {
+  let cancelled = false;
+  fakeFetchUser(id, id === 1 ? 500 : 100).then((user) => {
+    if (!cancelled) setUser(user);
+    else console.log("ignored stale response for id", id);
+  });
+  return () => { cancelled = true; };
+}
+
+let currentUser = null;
+const setUser = (u) => { currentUser = u; console.log("state updated ->", u); };
+
+// simulate: request id=1 starts, then id=2 starts before id=1 resolves
+const cleanup1 = fixedEffect(1, setUser);
+setTimeout(() => { cleanup1(); fixedEffect(2, setUser); }, 50);
+`},
+
+            {
+                d: 10, title: "React Performance", tags: ["memo", "code splitting", "virtualization"],
+                mission: "Know the APIs, but be ready to explain when NOT to use them — that's what separates a senior answer.",
+                topics: ["React.memo", "useMemo / useCallback", "Lazy loading & code splitting", "List virtualization", "Avoiding unnecessary renders"],
+                notes: "useMemo/useCallback have their own overhead (comparing deps every render). Overusing them on cheap computations or components that rarely re-render can make code harder to read for no measurable gain.",
+                questions: [["When should you NOT use useMemo/useCallback?", "When the computation is cheap, the component rarely re-renders, or nothing downstream depends on referential stability — the memoization overhead isn't worth it."],
+                ["How does React.memo differ from useMemo?", "React.memo memoizes a whole component's output based on props; useMemo memoizes a value inside a component."],
+                ["When would you reach for list virtualization?", "Rendering very long lists (hundreds+ rows) where only a viewport-sized window needs to be in the DOM at once."]],
+                task: "Implement a simple memoize-by-props check, mirroring what React.memo does under the hood.",
+                code: `function shallowEqual(objA, objB) {
+  if (objA === objB) return true;
+  const keysA = Object.keys(objA), keysB = Object.keys(objB);
+  if (keysA.length !== keysB.length) return false;
+  return keysA.every((k) => objA[k] === objB[k]);
+}
+
+function memoComponent(renderFn) {
+  let lastProps = null;
+  let lastOutput = null;
+  return function (props) {
+    if (lastProps && shallowEqual(lastProps, props)) {
+      console.log("skipped render, props unchanged");
+      return lastOutput;
+    }
+    lastProps = props;
+    lastOutput = renderFn(props);
+    console.log("rendered with", props);
+    return lastOutput;
+  };
+}
+
+const Price = memoComponent((props) => "$" + props.amount);
+Price({ amount: 10 });
+Price({ amount: 10 }); // should skip
+Price({ amount: 15 }); // should render
+`},
+
+            {
+                d: 11, title: "State Management & Data Fetching", tags: ["tanstack query", "caching", "optimistic updates"],
+                mission: "Be ready to argue for TanStack Query over 'API data in Redux' — it's a very common architecture question.",
+                topics: ["Local state vs Context vs Redux vs server state", "TanStack Query: caching, staleness, invalidation", "Optimistic updates", "Pagination & retry patterns"],
+                notes: "Server state is fundamentally different from client state — it's owned elsewhere, can go stale, and needs caching/invalidation/retry logic. Libraries like TanStack Query handle that lifecycle; Redux is built for client state you own.",
+                questions: [["Why use TanStack Query instead of storing API data in Redux?", "It gives you caching, background refetching, staleness tracking, retries, and invalidation out of the box, instead of hand-rolling reducers for server data."],
+                ["What is an optimistic update, and what's the risk?", "Updating the UI immediately before the server confirms, for snappy UX; the risk is needing a rollback path if the request fails."],
+                ["How does query invalidation work conceptually?", "After a mutation, you mark related queries as stale so the next read triggers a refetch instead of serving cached data."]],
+                task: "Build a tiny in-memory query cache with staleness and an optimistic update pattern.",
+                code: `function createQueryCache(staleMs = 2000) {
+  const cache = new Map();
+  return {
+    async get(key, fetcher) {
+      const entry = cache.get(key);
+      const now = Date.now();
+      if (entry && now - entry.time < staleMs) {
+        console.log("cache HIT for", key);
+        return entry.data;
+      }
+      console.log("cache MISS/stale for", key, "-> fetching");
+      const data = await fetcher();
+      cache.set(key, { data, time: now });
+      return data;
+    },
+    invalidate(key) {
+      cache.delete(key);
+      console.log("invalidated", key);
+    },
+  };
+}
+
+async function main() {
+  const query = createQueryCache(1000);
+  const fetchOrders = () => Promise.resolve([{ id: 1, status: "pending" }]);
+
+  await query.get("orders", fetchOrders); // MISS
+  await query.get("orders", fetchOrders); // HIT
+
+  // simulate a mutation, then invalidate so next read refetches
+  query.invalidate("orders");
+  await query.get("orders", fetchOrders); // MISS again
+}
+main();
+`},
+
+            {
+                d: 12, title: "Next.js Architecture", tags: ["ssr", "server components", "middleware"],
+                mission: "You use Next.js already — focus on why you'd choose each rendering strategy, not the syntax.",
+                topics: ["SSR / CSR / SSG / ISR", "Server Components vs Client Components", "Server Actions", "Route handlers & middleware", "Dynamic routes, caching"],
+                notes: "SSR gives you fresh, SEO-friendly HTML per request at the cost of server load and latency. SSG/ISR trade freshness for speed by pre-rendering at build time (ISR revalidates on an interval). Server Components ship zero JS for that piece of the tree by default.",
+                questions: [["Why choose SSR instead of CSR?", "When you need up-to-date, SEO-indexable content on first paint, or the page depends on request-specific data (auth, cookies)."],
+                ["Server Component vs Client Component — the core difference?", "Server Components render on the server with no client-side JS bundle and can access backend resources directly; Client Components run in the browser and can use state/effects/browser APIs."],
+                ["When would ISR be a better fit than SSR?", "Content that changes occasionally (product listings, blog posts) — you get static-speed responses with periodic background revalidation instead of rendering on every request."]],
+                task: "Model the decision logic for choosing a rendering strategy — a good way to rehearse the explanation.",
+                code: `function chooseRenderStrategy({ needsSEO, changesOften, isUserSpecific, canPrebuild }) {
+  if (isUserSpecific) return "SSR (per-request, needs auth/cookies)";
+  if (!changesOften && canPrebuild) return needsSEO ? "SSG" : "SSG (or CSR if SEO doesn't matter)";
+  if (changesOften && canPrebuild) return "ISR (static speed, periodic revalidation)";
+  if (changesOften && !needsSEO) return "CSR (client-fetched, no SEO need)";
+  return "SSR (dynamic + SEO required)";
+}
+
+console.log(chooseRenderStrategy({ needsSEO: true, changesOften: false, isUserSpecific: false, canPrebuild: true }));
+console.log(chooseRenderStrategy({ needsSEO: false, changesOften: true, isUserSpecific: true, canPrebuild: false }));
+console.log(chooseRenderStrategy({ needsSEO: true, changesOften: true, isUserSpecific: false, canPrebuild: true }));
+console.log(chooseRenderStrategy({ needsSEO: false, changesOften: true, isUserSpecific: false, canPrebuild: false }));
+`},
+
+            {
+                d: 13, title: "Frontend Architecture Case Study", tags: ["zestify", "lunovaire", "self-review"],
+                mission: "Open your own Zestify or Lunovaire codebase and interrogate it like an interviewer would. This turns real experience into interview-ready answers.",
+                topics: ["Folder structure rationale", "State management choices", "Axios vs fetch decisions", "API boundary design", "Auth flow", "Error handling & route protection"],
+                notes: "Write short answers to each question below about your own project. These become your 'walk me through your architecture' talking points — the highest-leverage prep you can do.",
+                questions: [["Why this folder structure in your project?", "Answer using your own Zestify/Lunovaire layout."],
+                ["Why TanStack Query here, Axios/fetch there?", "Be ready to justify each data-fetching choice by context, not habit."],
+                ["How is authentication handled end-to-end?", "Trace it from login form to protected route to token refresh."],
+                ["How do you protect a route, and what happens on an expired token?", "Describe the redirect/refresh flow precisely."]],
+                task: "No new code today — instead, write your answers as comments in this editor so you have them for review.",
+                code: `// Answer these about YOUR OWN project (Zestify or Lunovaire).
+// Keep each answer to 2-4 sentences you could say out loud in an interview.
+
+// 1. Why this folder structure?
+
+
+// 2. Why TanStack Query vs Axios/fetch, and where does each fit?
+
+
+// 3. How does authentication work, end to end?
+
+
+// 4. How are protected routes implemented?
+
+
+// 5. How are errors surfaced to the user vs logged for developers?
+
+
+console.log("Reflection saved in this file — re-read it before Day 29's deep dive.");
+`},
+
+            {
+                d: 14, title: "Week 2 Mock Interview", tags: ["mock", "react", "nextjs"],
+                mission: "45-60 minutes, no notes. Cover rendering, hooks, performance, state, fetching, Next.js, and architecture out loud.",
+                topics: ["Self-interview: React rendering", "Hooks", "Performance", "State management", "Next.js", "Architecture"],
+                notes: "If you freeze on a question, that's this week's gap — write it down and revisit before Day 30.",
+                questions: [["Walk me through what happens when a user clicks 'Add to Cart' in your app.", "Trace: event handler -> state update or mutation -> API call -> cache update -> UI re-render. Rehearse this for Day 29."],
+                ["How would you prevent a component from re-rendering unnecessarily?", "React.memo + stable prop references (useCallback/useMemo), or splitting state so unrelated updates don't cascade."]],
+                task: "Implement a tiny cart reducer — a realistic 'live coding' style exercise.",
+                code: `function cartReducer(state, action) {
+  switch (action.type) {
+    case "ADD_ITEM": {
+      const existing = state.items.find((i) => i.id === action.item.id);
+      const items = existing
+        ? state.items.map((i) => i.id === action.item.id ? { ...i, qty: i.qty + 1 } : i)
+        : [...state.items, { ...action.item, qty: 1 }];
+      return { ...state, items };
+    }
+    case "REMOVE_ITEM":
+      return { ...state, items: state.items.filter((i) => i.id !== action.id) };
+    default:
+      return state;
+  }
+}
+
+let state = { items: [] };
+state = cartReducer(state, { type: "ADD_ITEM", item: { id: 1, name: "Tee", price: 20 } });
+state = cartReducer(state, { type: "ADD_ITEM", item: { id: 1, name: "Tee", price: 20 } });
+state = cartReducer(state, { type: "ADD_ITEM", item: { id: 2, name: "Cap", price: 15 } });
+console.log(state.items);
+
+state = cartReducer(state, { type: "REMOVE_ITEM", id: 2 });
+console.log(state.items);
+`},
+
+            {
+                d: 15, title: "Node.js Internals", tags: ["event loop", "libuv", "streams"],
+                mission: "Explain why Node is a good fit for I/O-heavy apps — this is a foundational systems question.",
+                topics: ["Node runtime & V8", "Non-blocking I/O", "Worker threads", "process & env vars", "CommonJS vs ESM", "Streams & buffers"],
+                notes: "Node's single JS thread never blocks on I/O — it delegates file/network operations to libuv's thread pool or the OS, then resumes via the event loop when they complete. This lets one process serve thousands of concurrent connections without one thread per request.",
+                questions: [["Why is Node.js good for I/O-heavy applications?", "Non-blocking I/O means the single thread isn't stuck waiting on disk/network calls — it can handle many concurrent requests without spawning a thread per request."],
+                ["CommonJS vs ESM — a practical difference?", "require() is synchronous and dynamic; import is static/analyzable at build time, enabling tree-shaking, but requires .mjs or 'type: module' config."],
+                ["When would you reach for a worker thread?", "CPU-bound work (image processing, heavy computation) that would otherwise block the event loop."]],
+                task: "Simulate blocking vs non-blocking work to feel the difference.",
+                code: `function blockingWork(label, ms) {
+  const end = Date.now() + ms;
+  while (Date.now() < end) {} // busy-wait: blocks the thread
+  console.log(label, "finished (blocking)");
+}
+
+console.log("start");
+setTimeout(() => console.log("timer fired"), 50);
+
+// This blocking call delays the timer above, even though the timer
+// was scheduled first with a shorter delay:
+blockingWork("heavy sync task", 200);
+
+console.log("end of sync code");
+// Compare: in a real non-blocking version, the heavy task would be
+// offloaded (worker thread / async I/O) and "timer fired" would print on time.
+`},
+
+            {
+                d: 16, title: "Express Architecture", tags: ["middleware", "controllers", "request lifecycle"],
+                mission: "Be able to draw the request lifecycle from memory: Request → Middleware → Route → Controller → Service → DB → Response.",
+                topics: ["Middleware chain", "Route → Controller → Service → DB layering", "Error-handling middleware", "Structuring a large Express app"],
+                notes: "Middleware runs in registration order and each one must call next() (or send a response) or the request hangs. Centralizing error-handling middleware at the end keeps controllers free of repetitive try/catch.",
+                questions: [["What is middleware, precisely?", "A function with access to (req, res, next) that runs during the request/response cycle — can modify req/res, end the cycle, or pass control on with next()."],
+                ["What happens when a request reaches Express?", "It flows through the middleware stack in order, matches a route, runs the controller, and either a middleware or the controller sends the response."],
+                ["How would you structure a large Express app?", "Layer by responsibility: routes -> controllers (HTTP concerns) -> services (business logic) -> models/repositories (DB access), plus shared middleware and a central error handler."]],
+                task: "Build a minimal middleware chain simulator, including a next() and an error handler.",
+                code: `function createApp() {
+  const middlewares = [];
+  return {
+    use(fn) { middlewares.push(fn); },
+    handle(req, res) {
+      let i = 0;
+      function next(err) {
+        if (err) return console.log("ERROR HANDLER:", err.message);
+        const mw = middlewares[i++];
+        if (!mw) return console.log("no handler matched, 404");
+        try { mw(req, res, next); } catch (e) { next(e); }
+      }
+      next();
+    },
+  };
+}
+
+const app = createApp();
+app.use((req, res, next) => { console.log("[logger]", req.method, req.path); next(); });
+app.use((req, res, next) => {
+  if (!req.headers.authorization) return next(new Error("Unauthorized"));
+  next();
+});
+app.use((req, res) => console.log("controller: sending 200 OK"));
+
+app.handle({ method: "GET", path: "/orders", headers: {} }); // triggers error handler
+app.handle({ method: "GET", path: "/orders", headers: { authorization: "Bearer x" } }); // succeeds
+`},
+
+            {
+                d: 17, title: "REST API Design", tags: ["http methods", "status codes", "pagination"],
+                mission: "Know exactly which status code fits which situation — 401 vs 403 trips up a lot of candidates.",
+                topics: ["HTTP methods: GET/POST/PUT/PATCH/DELETE", "Status codes: 200/201/204/400/401/403/404/409/422/500", "Pagination, filtering, sorting", "API versioning", "Idempotency"],
+                notes: "401 means 'I don't know who you are' (missing/invalid auth). 403 means 'I know who you are, but you can't do this' (authenticated but unauthorized). PUT is idempotent (same result if repeated); POST is not.",
+                questions: [["401 vs 403 — what's the real difference?", "401 Unauthorized = authentication failed or missing; 403 Forbidden = authenticated successfully but lacking permission."],
+                ["PUT vs PATCH?", "PUT replaces the full resource; PATCH applies a partial update."],
+                ["What does idempotent mean, and which methods are idempotent?", "Calling it multiple times has the same effect as calling it once — GET, PUT, DELETE are idempotent; POST is not."]],
+                task: "Implement a status-code chooser and an idempotency check — good rehearsal for design questions.",
+                code: `function pickStatus({ method, resourceExists, authenticated, authorized, valid, conflict }) {
+  if (!authenticated) return 401;
+  if (!authorized) return 403;
+  if (!valid) return 422;
+  if (conflict) return 409;
+  if (!resourceExists && method !== "POST") return 404;
+  if (method === "POST") return 201;
+  if (method === "DELETE") return 204;
+  return 200;
+}
+
+console.log(pickStatus({ method: "POST", resourceExists: true, authenticated: true, authorized: true, valid: true, conflict: false }));   // 201
+console.log(pickStatus({ method: "GET", resourceExists: false, authenticated: true, authorized: true, valid: true, conflict: false }));    // 404
+console.log(pickStatus({ method: "PATCH", resourceExists: true, authenticated: false, authorized: true, valid: true, conflict: false }));  // 401
+console.log(pickStatus({ method: "POST", resourceExists: true, authenticated: true, authorized: true, valid: true, conflict: true }));     // 409
+
+const isIdempotent = (method) => ["GET", "PUT", "DELETE", "HEAD", "OPTIONS"].includes(method);
+console.log("POST idempotent?", isIdempotent("POST"));
+console.log("PUT idempotent?", isIdempotent("PUT"));
+`},
+
+            {
+                d: 18, title: "Authentication", tags: ["jwt", "refresh tokens", "httponly cookies"],
+                mission: "Know where to store a JWT and why — 'localStorage' as a blind default is a red flag answer in interviews.",
+                topics: ["Registration & password hashing", "Login → access token → refresh token flow", "HttpOnly, Secure, SameSite cookies", "bcrypt", "Token expiration & rotation"],
+                notes: "localStorage is readable by any JS on the page, so it's vulnerable to XSS-based token theft. HttpOnly cookies aren't readable by JS at all, trading that risk for needing CSRF protection instead.",
+                questions: [["Where should you store JWTs, and why?", "HttpOnly, Secure, SameSite cookies for the refresh token (protects against XSS token theft); a short-lived access token can live in memory. Avoid plain localStorage for anything sensitive."],
+                ["Why use both an access token and a refresh token?", "Short-lived access tokens limit the damage if leaked; the longer-lived refresh token, kept more securely, lets the client get new access tokens without re-login."],
+                ["What does bcrypt protect against, specifically?", "Rainbow-table and brute-force attacks on stolen password hashes — it's slow by design and salts each hash automatically."]],
+                task: "Simulate an access/refresh token flow with expiry and rotation.",
+                code: `function makeToken(sub, ttlMs) {
+  return { sub, expiresAt: Date.now() + ttlMs };
+}
+
+function isExpired(token) {
+  return Date.now() > token.expiresAt;
+}
+
+function refreshAccessToken(refreshToken) {
+  if (isExpired(refreshToken)) {
+    throw new Error("Refresh token expired — force re-login");
+  }
+  console.log("issuing new access token for", refreshToken.sub);
+  return makeToken(refreshToken.sub, 1000 * 60 * 15); // 15 min
+}
+
+let access = makeToken("user_42", 1); // expires almost immediately for this demo
+const refresh = makeToken("user_42", 1000 * 60 * 60 * 24 * 7); // 7 days
+
+setTimeout(() => {
+  if (isExpired(access)) {
+    console.log("access token expired, refreshing...");
+    access = refreshAccessToken(refresh);
+    console.log("new access token expires at", new Date(access.expiresAt).toISOString());
+  }
+}, 20);
+`},
+
+            {
+                d: 19, title: "Web Security", tags: ["xss", "csrf", "cors"],
+                mission: "CORS vs CSRF is possibly the most-asked security question in MERN interviews. Get it airtight today.",
+                topics: ["XSS", "CSRF", "CORS", "NoSQL/SQL injection", "Rate limiting & Helmet", "Input validation", "HTTPS & security headers"],
+                notes: "CORS is a browser rule about which origins may read a response — it protects the server's data from being read by unauthorized frontends. CSRF is an attack where a malicious site tricks a logged-in user's browser into sending a request the user didn't intend — mitigated with CSRF tokens or SameSite cookies.",
+                questions: [["CORS vs CSRF — the core distinction?", "CORS is a browser-enforced policy controlling which origins can read a response; CSRF is an attack that exploits a browser automatically attaching cookies to requests, tricking it into performing unwanted actions."],
+                ["How does XSS differ from CSRF?", "XSS injects malicious script into a page to run in the victim's browser context; CSRF doesn't inject anything — it forges a request using the victim's existing authenticated session."],
+                ["How do you defend against NoSQL injection in MongoDB queries?", "Validate/sanitize input types (reject objects where a string is expected) and avoid directly interpolating user input into query operators."]],
+                task: "Write a basic input sanitizer that blocks a NoSQL-injection-style payload.",
+                code: `function sanitizeQueryInput(input) {
+  if (typeof input !== "string") {
+    throw new Error("Invalid input: expected a string, got " + typeof input);
+  }
+  // reject obvious Mongo operator injection attempts if a string was expected
+  if (input.trim().startsWith("{") || input.includes("$")) {
+    throw new Error("Rejected suspicious input");
+  }
+  return input.trim();
+}
+
+try {
+  console.log(sanitizeQueryInput("normal-email@example.com"));
+  console.log(sanitizeQueryInput({ "$gt": "" })); // classic NoSQL injection attempt via object
+} catch (e) {
+  console.log("blocked:", e.message);
+}
+
+try {
+  console.log(sanitizeQueryInput('{"$ne": null}')); // string-form injection attempt
+} catch (e) {
+  console.log("blocked:", e.message);
+}
+`},
+
+            {
+                d: 20, title: "MongoDB Fundamentals", tags: ["documents", "indexes", "aggregation"],
+                mission: "Go beyond find()/create() — know when to embed vs reference, and how $lookup joins collections.",
+                topics: ["Documents & collections", "Indexes & compound indexes", "Aggregation pipeline & $lookup", "Projection & pagination", "Embedded vs referenced documents", "Transactions"],
+                notes: "Embed when data is always read together and rarely updated independently (e.g. an order's line items). Reference when data is large, shared across documents, or updated independently (e.g. a product catalog referenced by many orders).",
+                questions: [["When would you embed data instead of referencing?", "When the sub-data is small, bounded, always accessed with the parent, and doesn't need independent querying — e.g. an address embedded in a user document."],
+                ["What does an index actually do, mechanically?", "Maintains a sorted data structure (B-tree) on the indexed field so queries can avoid a full collection scan."],
+                ["What is $lookup used for?", "Performing a left-outer-join-style merge between two collections in an aggregation pipeline."]],
+                task: "Model an embed-vs-reference decision function based on the criteria above.",
+                code: `function embedOrReference({ isLarge, updatedIndependently, sharedAcrossDocs, alwaysReadTogether }) {
+  if (isLarge || updatedIndependently || sharedAcrossDocs) return "REFERENCE";
+  if (alwaysReadTogether) return "EMBED";
+  return "REFERENCE (default to normalized when unsure)";
+}
+
+console.log("order line items:", embedOrReference({ isLarge: false, updatedIndependently: false, sharedAcrossDocs: false, alwaysReadTogether: true }));
+console.log("product catalog ref from order:", embedOrReference({ isLarge: true, updatedIndependently: true, sharedAcrossDocs: true, alwaysReadTogether: false }));
+console.log("user shipping address:", embedOrReference({ isLarge: false, updatedIndependently: false, sharedAcrossDocs: false, alwaysReadTogether: true }));
+
+// Simulated aggregation-style join over plain arrays
+const orders = [{ id: 1, userId: 101, total: 40 }, { id: 2, userId: 102, total: 15 }];
+const users = [{ id: 101, name: "Ayesha" }, { id: 102, name: "Karim" }];
+
+const joined = orders.map((o) => ({ ...o, user: users.find((u) => u.id === o.userId) }));
+console.log(joined);
+`},
+
+            {
+                d: 21, title: "MongoDB Performance", tags: ["indexes", "explain", "query optimization"],
+                mission: "Ask yourself 'what happens with 10 million users?' about every query you write from now on.",
+                topics: ["Index strategy", "explain() plans", "Query optimization", "Pagination at scale", "Connection pooling"],
+                notes: "An unindexed query on a 10M-document collection forces a full collection scan (COLLSCAN) — this scales linearly and gets slow fast. Offset-based pagination (skip/limit) also gets slower on deep pages; cursor/keyset pagination scales better.",
+                questions: [["What happens to User.find({ email }) at 10 million documents with no index?", "MongoDB performs a full collection scan (COLLSCAN) — every document is checked, which is O(n) and becomes unacceptably slow at scale. An index on email turns it into a fast lookup."],
+                ["Why does deep pagination with skip() get slow?", "skip(n) still has to walk past n documents before returning results — cost grows with page depth. Keyset/cursor pagination avoids this by querying 'after this id/timestamp'."],
+                ["What is connection pooling and why does it matter?", "Reusing a fixed set of open DB connections instead of opening a new one per request — avoids the overhead/latency of repeated connection setup under load."]],
+                task: "Compare offset pagination vs cursor pagination cost as data grows.",
+                code: `function offsetPaginate(data, page, pageSize) {
+  const skip = (page - 1) * pageSize; // simulates cost of skip()
+  console.log('offset page', page, '-> skipped', skip, 'docs');
+  return data.slice(skip, skip + pageSize);
+}
+
+function cursorPaginate(data, afterId, pageSize) {
+  const startIndex = afterId == null ? 0 : data.findIndex((d) => d.id === afterId) + 1;
+  console.log('cursor after id', afterId, '-> direct index lookup, no skipping');
+  return data.slice(startIndex, startIndex + pageSize);
+}
+
+const data = Array.from({ length: 1000 }, (_, i) => ({ id: i + 1 }));
+
+offsetPaginate(data, 1, 5);
+offsetPaginate(data, 50, 5);   // has to "skip" 245 docs
+
+let page = cursorPaginate(data, null, 5);
+console.log(page);
+page = cursorPaginate(data, page[page.length - 1].id, 5); // O(1)-ish with a real index
+console.log(page);
+`},
+
+            {
+                d: 22, title: "SQL / PostgreSQL Basics", tags: ["joins", "normalization", "transactions"],
+                mission: "Many 'MERN' job listings still expect basic SQL fluency. Cover the core clauses and relational thinking today.",
+                topics: ["SELECT / WHERE / JOIN / GROUP BY / ORDER BY / HAVING", "INSERT / UPDATE / DELETE", "Primary & foreign keys", "Normalization", "Transactions"],
+                notes: "HAVING filters after aggregation (GROUP BY), while WHERE filters rows before aggregation — a classic gotcha. Normalization reduces data duplication by splitting data into related tables joined by keys.",
+                questions: [["WHERE vs HAVING?", "WHERE filters individual rows before grouping; HAVING filters groups after GROUP BY/aggregation."],
+                ["What's a foreign key, and what does it enforce?", "A column referencing another table's primary key, enforcing referential integrity — you can't insert a row pointing to a non-existent parent."],
+                ["Why use a transaction?", "To guarantee a group of operations either all succeed or all roll back together — critical for things like 'deduct stock AND create order'."]],
+                task: "This runs as JS modeling SQL-like operations over arrays, to rehearse the relational logic without needing a live DB.",
+                code: `const orders = [
+  { id: 1, userId: 1, total: 40 },
+  { id: 2, userId: 1, total: 15 },
+  { id: 3, userId: 2, total: 90 },
+];
+const users = [{ id: 1, name: "Ayesha" }, { id: 2, name: "Karim" }];
+
+// SELECT u.name, SUM(o.total) FROM orders o JOIN users u ON o.userId = u.id GROUP BY u.name
+const spendByUser = {};
+for (const o of orders) {
+  const user = users.find((u) => u.id === o.userId);
+  spendByUser[user.name] = (spendByUser[user.name] || 0) + o.total;
+}
+console.log(spendByUser);
+
+// ... HAVING SUM(o.total) > 50
+const bigSpenders = Object.entries(spendByUser).filter(([, total]) => total > 50);
+console.log("big spenders (HAVING > 50):", bigSpenders);
+`},
+
+            {
+                d: 23, title: "Git & GitHub", tags: ["rebase", "merge conflicts", "reset vs revert"],
+                mission: "reset vs revert and resolving a merge conflict are the two questions that come up almost every time.",
+                topics: ["clone / branch / checkout / switch", "merge vs rebase", "stash", "reset vs revert", "cherry-pick", "Resolving merge conflicts"],
+                notes: "reset moves the branch pointer (and can discard commits/history) — dangerous on shared branches. revert creates a new commit that undoes a previous one, preserving history — safe for shared branches.",
+                questions: [["git reset vs git revert?", "reset rewrites history by moving the branch pointer (risky if pushed/shared); revert adds a new commit that undoes changes, keeping history intact and safe to push."],
+                ["How do you resolve a merge conflict?", "Git marks the conflicting sections with <<<<<<< / ======= / >>>>>>> markers in the file; manually choose/combine the correct content, remove the markers, git add the file, then commit."],
+                ["merge vs rebase — when would you pick each?", "merge preserves true history with a merge commit; rebase replays your commits on top of the target branch for a linear history — avoid rebasing commits already pushed/shared."]],
+                task: "No code execution today — write out the exact command sequence for these two scenarios as comments, then say them aloud.",
+                code: `// Scenario 1: You committed to main by mistake and need to undo the last commit,
+// but it's already been pushed and a teammate has pulled it. Write the safe fix:
+
+
+// Scenario 2: You rebase your feature branch onto main and hit a conflict
+// in src/api/orders.js. Write the full command sequence to resolve it:
+
+
+console.log("Command sequences written above — rehearse them out loud before Day 28.");
+`},
+
+            {
+                d: 24, title: "Docker & Deployment", tags: ["dockerfile", "compose", "reverse proxy"],
+                mission: "You don't need deep DevOps — but be able to describe the full path from a React build to a live URL.",
+                topics: ["Dockerfile, image, container, volume, network", "Docker Compose", "Env vars in containers", "DNS, HTTPS, reverse proxy", "Logs"],
+                notes: "A typical deployment path: frontend build -> served as static assets or via a Node server -> reverse proxy (Nginx) terminates HTTPS and routes /api to the backend container -> backend talks to a managed database.",
+                questions: [["Walk through frontend -> API -> DB in a deployed MERN app.", "Browser hits the domain -> reverse proxy (HTTPS termination) -> routes / to frontend, /api to backend container -> backend queries MongoDB (often a managed cluster) -> response flows back."],
+                ["What's the difference between an image and a container?", "An image is the immutable build artifact/blueprint; a container is a running instance of that image."],
+                ["Why put Nginx (or similar) in front of your Node app?", "HTTPS termination, static asset serving, load balancing, and routing multiple services under one domain."]],
+                task: "Model a minimal reverse-proxy router in JS to rehearse the routing logic.",
+                code: `function createReverseProxy(routes) {
+  return function handle(path) {
+    const match = routes.find((r) => path.startsWith(r.prefix));
+    if (!match) return "502 Bad Gateway (no route matched)";
+    return 'routed "' + path + '" -> ' + match.target;
+  };
+}
+
+const proxy = createReverseProxy([
+  { prefix: "/api/", target: "backend-container:5000" },
+  { prefix: "/", target: "frontend-container:3000" },
+]);
+
+console.log(proxy("/api/orders/42"));
+console.log(proxy("/dashboard"));
+console.log(proxy("/api/auth/login"));
+`},
+
+            {
+                d: 25, title: "System Design for MERN", tags: ["scaling", "caching", "payments"],
+                mission: "Design a simple ecommerce system, then push yourself with 'how would you handle 100,000 users?'",
+                topics: ["React/Next -> API -> Node/Express -> MongoDB", "Caching layers (Redis)", "Pagination at scale", "Preventing duplicate orders", "Handling payment failure", "Handling a slow API"],
+                notes: "Preventing duplicate orders usually means an idempotency key sent by the client (or generated server-side per checkout session) that the server checks before processing a payment/order twice.",
+                questions: [["How would you prevent duplicate orders from a double-click or retry?", "Use an idempotency key per checkout attempt — store it with the order, and reject/return the existing result if the same key arrives again."],
+                ["Where would Redis fit in this architecture?", "Caching hot reads (product listings, sessions), rate limiting, and as a queue/lock for things like idempotency keys or checkout concurrency."],
+                ["How would you handle an API that's becoming slow under load?", "Add caching for hot paths, add indexes, paginate, consider read replicas, and set timeouts + circuit breakers so one slow dependency doesn't cascade."]],
+                task: "Implement an idempotency-key checker — a concrete piece of the design question above.",
+                code: `function createIdempotencyStore(ttlMs = 60000) {
+  const seen = new Map();
+  return function process(key, action) {
+    const now = Date.now();
+    const existing = seen.get(key);
+    if (existing && now - existing.time < ttlMs) {
+      console.log("duplicate request blocked for key:", key);
+      return existing.result;
+    }
+    const result = action();
+    seen.set(key, { result, time: now });
+    console.log("processed new request for key:", key, "-> result:", result);
+    return result;
+  };
+}
+
+const checkout = createIdempotencyStore();
+let orderCounter = 0;
+const createOrder = () => "order_" + (++orderCounter);
+
+checkout("key-abc-123", createOrder); // processed
+checkout("key-abc-123", createOrder); // blocked as duplicate (double-click / retry)
+checkout("key-xyz-789", createOrder); // processed, different key
+`},
+
+            {
+                d: 26, title: "Build a Mini Ecommerce API", tags: ["auth", "validation", "pagination"],
+                mission: "No tutorial — build the route/controller logic for a small ecommerce API from memory, focused on speed and fundamentals.",
+                topics: ["POST /auth/register, /auth/login", "GET/POST/PATCH/DELETE /products", "POST/GET /orders", "JWT auth + role checks", "Validation & pagination"],
+                notes: "You already have far larger apps than this — the point is fluency: can you produce clean route/controller/validation logic quickly, without hunting for syntax.",
+                questions: [["What does your validation layer check before a controller runs?", "Required fields, types, ranges/formats, and that referenced IDs (e.g. productId on an order) actually exist."],
+                ["How do role checks typically sit in the middleware chain?", "After authentication middleware (which sets req.user), a requireRole('admin') middleware runs before the controller."]],
+                task: "Implement a role-guard middleware and a paginated product list handler.",
+                code: `function requireRole(role) {
+  return function (req, res, next) {
+    if (!req.user) return next(new Error("401 Unauthorized"));
+    if (req.user.role !== role) return next(new Error("403 Forbidden"));
+    next();
+  };
+}
+
+function listProducts(products, { page = 1, pageSize = 5, category } = {}) {
+  let filtered = category ? products.filter((p) => p.category === category) : products;
+  const start = (page - 1) * pageSize;
+  return {
+    items: filtered.slice(start, start + pageSize),
+    total: filtered.length,
+    page,
+    totalPages: Math.ceil(filtered.length / pageSize),
+  };
+}
+
+// --- demo ---
+const products = Array.from({ length: 12 }, (_, i) => ({
+  id: i + 1, name: "Item " + (i + 1), category: i % 2 === 0 ? "shirts" : "shoes",
+}));
+console.log(listProducts(products, { page: 2, pageSize: 4, category: "shirts" }));
+
+const adminGuard = requireRole("admin");
+adminGuard({ user: { role: "customer" } }, {}, (err) => console.log(err ? err.message : "passed"));
+adminGuard({ user: { role: "admin" } }, {}, (err) => console.log(err ? err.message : "passed"));
+`},
+
+            {
+                d: 27, title: "Debugging Day", tags: ["systematic debugging", "tracing"],
+                mission: "Practice tracing a bug systematically: Frontend -> Network tab -> Request -> Backend logs -> Controller -> DB query -> Response.",
+                topics: ["Chrome DevTools & Network tab", "React DevTools", "Node debugger", "Postman/Insomnia", "Systematic root-cause tracing"],
+                notes: "Interviewers care more about your debugging process than whether you spot the bug instantly — narrate your reasoning: reproduce, isolate, hypothesize, verify.",
+                questions: [["Walk me through your debugging process for a bug you can't reproduce locally.", "Check logs/monitoring for the exact request payload and environment, compare against local env config differences, add targeted logging, and try to reproduce with the same input/environment."],
+                ["The frontend shows stale data after a mutation — where do you look first?", "Check whether the mutation actually succeeded (network tab), then whether the cache was invalidated/refetched, then whether the component is reading from the right state."]],
+                task: "Find and fix the bug in this small function — it has a subtle off-by-one/edge-case issue, debug it like a real ticket.",
+                code: `// Bug report: "getDiscountedPrice sometimes returns a negative price
+// or NaN for edge-case inputs. Find and fix it."
+
+function getDiscountedPrice(price, discountPercent) {
+  const discount = price * discountPercent / 100;
+  return price - discount;
+}
+
+// Reproduce the reported issues:
+console.log(getDiscountedPrice(100, 20));   // expected 80
+console.log(getDiscountedPrice(100, 150));  // bug: negative price, should probably clamp to 0
+console.log(getDiscountedPrice(100, "20")); // bug: string input should still work safely
+console.log(getDiscountedPrice(100, -10));  // bug: negative discount should probably clamp to 0-100
+
+// Your fix:
+function getDiscountedPriceFixed(price, discountPercent) {
+  const pct = Number(discountPercent);
+  const clamped = Math.min(100, Math.max(0, isNaN(pct) ? 0 : pct));
+  const discount = price * clamped / 100;
+  return Math.max(0, price - discount);
+}
+
+console.log("---fixed---");
+console.log(getDiscountedPriceFixed(100, 20));
+console.log(getDiscountedPriceFixed(100, 150));
+console.log(getDiscountedPriceFixed(100, "20"));
+console.log(getDiscountedPriceFixed(100, -10));
+`},
+
+            {
+                d: 28, title: "Full Mock Interview", tags: ["mock", "all rounds"],
+                mission: "Simulate 5 rounds: JS (20), React (15), Node/Express (15), MongoDB (10), General (10). Then answer the behavioral prompts below.",
+                topics: ["Round 1: JavaScript", "Round 2: React", "Round 3: Node/Express", "Round 4: MongoDB", "Round 5: General/behavioral"],
+                notes: "Write short spoken-style answers to the behavioral prompts — these get asked in nearly every interview regardless of tech stack.",
+                questions: [["Tell me about yourself.", "2-3 sentences: current focus, standout project, what you're looking for next."],
+                ["Tell me about your most complex project.", "Pick Zestify or Lunovaire — problem, architecture, your specific contributions, outcome."],
+                ["Tell me about a difficult bug you solved.", "Use the Day 27 debugging framework: symptom, hypothesis, isolation, fix, prevention."],
+                ["What would you improve in your current project?", "Pick one real, specific improvement — shows self-awareness, not just satisfaction."]],
+                task: "Write your behavioral answers as comments here, then run a final review pass across Days 1-27's flagged gaps.",
+                code: `// Tell me about yourself:
+
+
+// Tell me about your most complex project (Zestify or Lunovaire):
+
+
+// Tell me about a difficult bug you solved:
+
+
+// What would you improve in your current project?
+
+
+// List every question from Days 1-27 you couldn't answer confidently:
+// (this becomes your Day 30 revision list)
+
+
+console.log("Answers drafted. Say each one aloud once before moving to Day 29.");
+`},
+
+            {
+                d: 29, title: "Project Deep Dive", tags: ["zestify", "lunovaire", "storytelling"],
+                mission: "Prepare a 5-10 minute walkthrough of Zestify, then Lunovaire: Problem -> Architecture -> Frontend -> Backend -> Database -> Auth -> Challenges -> Solutions -> Scaling -> What you'd improve.",
+                topics: ["Problem framing", "Architecture overview", "Frontend/backend/DB decisions", "Authentication", "Challenges & solutions", "Scaling considerations", "What you'd improve"],
+                notes: "Rehearse the exact click-to-database trace: 'a customer clicks Add to Cart — what happens from browser to database and back?' That single question exposes whether you truly understand your own system.",
+                questions: [["A customer clicks Add to Cart. What happens from browser to database and back?", "Trace every hop: event handler -> optimistic UI update (maybe) -> API call -> auth check -> validation -> DB write -> response -> cache/state update -> final re-render."],
+                ["What was the hardest architectural decision in Zestify or Lunovaire, and why?", "Pick a real one — multi-tenancy boundary, payment flow, image handling — and explain the trade-off you weighed."]],
+                task: "Write your full click-to-database trace for Zestify (or Lunovaire) as structured comments — this is your strongest interview asset.",
+                code: `// PROJECT: (Zestify / Lunovaire)
+
+// Problem it solves:
+
+
+// Architecture (one paragraph):
+
+
+// Frontend decisions (why these choices):
+
+
+// Backend decisions:
+
+
+// Database schema decisions:
+
+
+// Authentication flow:
+
+
+// Hardest challenge + how you solved it:
+
+
+// What you'd improve with more time:
+
+
+// Full trace: "customer clicks Add to Cart" -> ... -> database -> ... -> UI updates
+// Step 1:
+// Step 2:
+// Step 3:
+// (continue until the full round trip is mapped)
+
+console.log("Deep dive drafted — rehearse it out loud twice before Day 30.");
+`},
+
+            {
+                d: 30, title: "Final Interview Simulation", tags: ["final", "full sprint review"],
+                mission: "90-minute simulated interview: 15 min intro/project discussion, 20 min JS, 15 min React/Next, 15 min Node/Express, 10 min MongoDB, 10 min system design, 5 min Git/Docker/deployment.",
+                topics: ["Full simulated interview, all rounds", "Gap list from Day 28", "Final self-assessment"],
+                notes: "After the simulation, write down every question you couldn't answer — that list becomes your focused revision plan for the week after this sprint. Target state: given any MERN app, you can explain its architecture, implement a feature, debug it, optimize it, secure it, and justify your decisions.",
+                questions: [["Give me a MERN app. Explain its architecture, implement a feature, debug it, optimize it, secure it, and justify your decisions.", "This is the composite target of the whole 30 days — answer using Zestify or Lunovaire as the concrete example, touching each of the six areas."]],
+                task: "Run this self-check script, then fill in your final gap list below.",
+                code: `const topics = [
+  "JavaScript fundamentals", "Closures & async", "Event loop", "TypeScript",
+  "React rendering & hooks", "Performance", "State mgmt & data fetching", "Next.js",
+  "Node internals", "Express architecture", "REST design", "Auth", "Security",
+  "MongoDB modeling", "MongoDB performance", "SQL basics", "Git", "Docker/deploy",
+  "System design", "Debugging",
+];
+
+// Rate yourself honestly 1-5 for each topic, then run to see your weakest areas.
+const selfRating = {
+  "JavaScript fundamentals": 5,
+  "Closures & async": 5,
+  "Event loop": 4,
+  "TypeScript": 4,
+  "React rendering & hooks": 5,
+  "Performance": 4,
+  "State mgmt & data fetching": 4,
+  "Next.js": 4,
+  "Node internals": 3,
+  "Express architecture": 4,
+  "REST design": 4,
+  "Auth": 4,
+  "Security": 3,
+  "MongoDB modeling": 4,
+  "MongoDB performance": 3,
+  "SQL basics": 3,
+  "Git": 4,
+  "Docker/deploy": 3,
+  "System design": 3,
+  "Debugging": 4,
+};
+
+const weakest = Object.entries(selfRating)
+  .filter(([, score]) => score <= 3)
+  .sort((a, b) => a[1] - b[1]);
+
+console.log("Your revision priority list for next week:");
+weakest.forEach(([topic, score]) => console.log(" -", topic, "(" + score + "/5)"));
+
+if (weakest.length === 0) console.log("No topic rated 3 or below — you're ready to apply.");
+`},
+        ];
+
+        // ---------- day checkpoint tests: 4 MCQs + 1 coding challenge per day, 20% each, 80%+ to pass ----------
+        const TESTS = {
+            1: {
+                mcqs: [
+                    { q: "What happens when you assign an object to a new variable?", options: ["A full deep copy is made", "The new variable points to the same object (reference copy)", "The object is frozen", "Nothing, it throws an error"], correct: 1 },
+                    { q: "typeof null returns:", options: ["'null'", "'undefined'", "'object'", "'boolean'"], correct: 2 },
+                    { q: "Which comparison checks value only, allowing type coercion?", options: ["===", "==", "Object.is()", "typeof"], correct: 1 },
+                    { q: "Which of these is a reference type, not a primitive?", options: ["string", "number", "array", "boolean"], correct: 2 },
+                ], challenge: {
+                    prompt: "Write isPrimitive(value) that returns true for primitives (string, number, boolean, null, undefined, symbol, bigint) and false for objects/arrays/functions.", functionName: "isPrimitive", starterCode: "function isPrimitive(value) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [5], expected: true }, { args: ["hi"], expected: true }, { args: [{}], expected: false }, { args: [[1, 2]], expected: false }, { args: [null], expected: true },
+                    ]
+                }
+            },
+
+            2: {
+                mcqs: [
+                    { q: "A closure is best described as:", options: ["A function that never returns", "A function bundled with references to its surrounding scope", "A way to freeze an object", "A synchronous version of a Promise"], correct: 1 },
+                    { q: "Why does a var-based for-loop with setTimeout log the same final value for every callback?", options: ["setTimeout is broken", "var is function-scoped, so all callbacks share one binding", "Closures don't work with loops", "Arrays are copied by value"], correct: 1 },
+                    { q: "What fixes the classic var-loop-closure bug?", options: ["Using let instead of var", "Using == instead of ===", "Removing setTimeout", "Using a while loop"], correct: 0 },
+                    { q: "An IIFE is:", options: ["A type of Promise", "A function invoked immediately after being defined", "An interface in TypeScript", "A React hook"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write makeMultiplier(factor) — a factory function that returns a new function which multiplies its input by factor (classic closure pattern).", functionName: "makeMultiplier", starterCode: "function makeMultiplier(factor) {\n  // return a function that multiplies its argument by factor\n}", testType: "chainCall", tests: [
+                        { args: [3], args2: [4], expected: 12 }, { args: [0], args2: [99], expected: 0 }, { args: [-2], args2: [5], expected: -10 },
+                    ]
+                }
+            },
+
+            3: {
+                mcqs: [
+                    { q: "Promise.all() rejects as soon as:", options: ["All promises settle", "The first promise rejects", "10 seconds pass", "Never, it always resolves"], correct: 1 },
+                    { q: "Which method waits for every promise and reports each result's status, success or failure?", options: ["Promise.race", "Promise.any", "Promise.allSettled", "Promise.resolve"], correct: 2 },
+                    { q: "Why is running two independent API calls with Promise.all faster than two sequential awaits?", options: ["It skips network latency", "The requests start concurrently instead of waiting on each other", "It caches the second request", "It disables the event loop"], correct: 1 },
+                    { q: "Inside an async function, how do you handle a rejected await?", options: ["if/else", "try/catch", "switch", ".finally() only"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write mergeFulfilled(results) that takes the array Promise.allSettled() returns and returns only the .value of the fulfilled entries, in order.", functionName: "mergeFulfilled", starterCode: "function mergeFulfilled(results) {\n  // results looks like: [{status:'fulfilled',value:1},{status:'rejected',reason:'x'}]\n}", testType: "call", tests: [
+                        { args: [[{ status: "fulfilled", value: 1 }, { status: "rejected", reason: "x" }, { status: "fulfilled", value: 3 }]], expected: [1, 3] },
+                        { args: [[{ status: "rejected", reason: "a" }]], expected: [] },
+                        { args: [[{ status: "fulfilled", value: "ok" }]], expected: ["ok"] },
+                    ]
+                }
+            },
+
+            4: {
+                mcqs: [
+                    { q: "Given sync code, a setTimeout(fn,0), and a Promise.then(fn) all queued together, the order is:", options: ["setTimeout, then sync, then Promise", "Sync, then Promise (microtask), then setTimeout (macrotask)", "Promise, then setTimeout, then sync", "They all run at the same time"], correct: 1 },
+                    { q: "Promise callbacks are classified as:", options: ["Macrotasks", "Microtasks", "Web APIs", "Render tasks"], correct: 1 },
+                    { q: "The event loop picks the next macrotask only when:", options: ["The call stack has 2+ items", "The microtask queue is completely empty", "A user clicks something", "Every 16ms"], correct: 1 },
+                    { q: "setTimeout(fn, 0) means:", options: ["fn runs synchronously right now", "fn is scheduled as a macrotask for the next available tick", "fn never runs", "fn runs before any Promise"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write classifyTask(type) that returns 'sync' for 'sync', 'microtask' for 'promise', and 'macrotask' for 'setTimeout' or 'setInterval'.", functionName: "classifyTask", starterCode: "function classifyTask(type) {\n  // 'sync' | 'promise' -> 'microtask' | 'setTimeout'/'setInterval' -> 'macrotask'\n}", testType: "call", tests: [
+                        { args: ["sync"], expected: "sync" }, { args: ["promise"], expected: "microtask" }, { args: ["setTimeout"], expected: "macrotask" }, { args: ["setInterval"], expected: "macrotask" },
+                    ]
+                }
+            },
+
+            5: {
+                mcqs: [
+                    { q: "Debounce is best used for:", options: ["Scroll handlers that must fire steadily", "Search-as-you-type inputs that should wait until typing pauses", "Rendering large lists", "Sorting arrays"], correct: 1 },
+                    { q: "Throttle guarantees:", options: ["A function never runs twice", "A function runs at most once per interval", "A function only runs on the server", "A function runs only once ever"], correct: 1 },
+                    { q: "Prototypal inheritance means objects:", options: ["Copy a class definition at creation", "Delegate to a prototype object at property lookup time", "Cannot inherit at all", "Only work with classes"], correct: 1 },
+                    { q: "Array.prototype.reduce is best described as:", options: ["A way to filter arrays", "A way to fold an array down into a single accumulated value", "A sorting algorithm", "A way to clone arrays"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write groupBy(array, keyFn) that groups array items into an object keyed by keyFn(item) applied to each item.", functionName: "groupBy", starterCode: "function groupBy(array, keyFn) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [[1, 2, 3, 4, 5], (n) => n % 2 === 0 ? "even" : "odd"], expected: { odd: [1, 3, 5], even: [2, 4] } },
+                        { args: [[], (n) => n], expected: {} },
+                    ]
+                }
+            },
+
+            6: {
+                mcqs: [
+                    { q: "unknown differs from any because:", options: ["unknown forces a type check before use, any opts out of checking", "They are identical", "unknown only works with strings", "any is stricter"], correct: 0 },
+                    { q: "Which utility type builds a new type using only selected keys?", options: ["Omit", "Pick", "Record", "Partial"], correct: 1 },
+                    { q: "Omit<User, 'id' | 'createdAt'> produces:", options: ["Only id and createdAt", "Every field except id and createdAt", "An empty type", "A union type"], correct: 1 },
+                    { q: "When must you use `type` instead of `interface`?", options: ["For simple object shapes", "For unions, tuples, and mapped types", "Never, they're identical", "For classes only"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write pickFields(obj, keys) that returns a new object containing only the given keys (mirrors TypeScript's Pick<T,K>).", functionName: "pickFields", starterCode: "function pickFields(obj, keys) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [{ id: 1, name: "A", email: "a@x.com" }, ["id", "name"]], expected: { id: 1, name: "A" } },
+                        { args: [{ a: 1, b: 2 }, ["c"]], expected: {} },
+                    ]
+                }
+            },
+
+            7: {
+                mcqs: [
+                    { q: "Event delegation means:", options: ["Attaching a listener to every child element", "Attaching one listener to a parent and using e.target", "Removing all event listeners", "Using only inline onclick"], correct: 1 },
+                    { q: "fn.bind(obj) returns:", options: ["The result of calling fn immediately", "A new function with `this` permanently set to obj", "undefined", "A Promise"], correct: 1 },
+                    { q: "call() vs apply() differ in:", options: ["call takes an args array, apply takes individual args", "apply takes an args array, call takes individual args", "They are unrelated to `this`", "There is no difference"], correct: 1 },
+                    { q: "Deep equality (like lodash isEqual) differs from === because it:", options: ["Compares by reference only", "Recursively compares structure/values", "Only works on numbers", "Is slower but identical in result to ==="], correct: 1 },
+                ], challenge: {
+                    prompt: "Write deepEqual(a, b) that recursively compares two values for structural equality (handles nested plain objects).", functionName: "deepEqual", starterCode: "function deepEqual(a, b) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [{ a: 1, b: { c: 2 } }, { a: 1, b: { c: 2 } }], expected: true },
+                        { args: [{ a: 1 }, { a: 2 }], expected: false },
+                        { args: [[1, 2], [1, 2]], expected: true },
+                    ]
+                }
+            },
+
+            8: {
+                mcqs: [
+                    { q: "A React component re-renders when:", options: ["Any variable anywhere changes", "Its state, its parent's state, or context it consumes changes", "The browser window resizes", "Only on page load"], correct: 1 },
+                    { q: "Does mutating a plain (non-state) JS variable trigger a re-render?", options: ["Yes, always", "No, only setState/useState updates schedule renders", "Only in class components", "Only with useEffect"], correct: 1 },
+                    { q: "Keys in a list help React:", options: ["Style list items", "Match items across renders by identity instead of index", "Sort the array", "Add event listeners"], correct: 1 },
+                    { q: "A controlled input means:", options: ["The DOM manages its own value", "React state is the single source of truth for its value", "It cannot be edited", "It has no onChange handler"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write shouldRerender(prev, next) that returns true only if prev and next are NOT the same reference (mirrors Object.is-based bail-out logic).", functionName: "shouldRerender", starterCode: "function shouldRerender(prev, next) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [{ a: 1 }, { a: 1 }], expected: true },
+                        { args: [5, 5], expected: false },
+                    ]
+                }
+            },
+
+            9: {
+                mcqs: [
+                    { q: "useEffect runs twice in development because:", options: ["It's a bug in React", "Strict Mode intentionally double-invokes effects to surface missing cleanup", "Your code has an error", "It only happens in production"], correct: 1 },
+                    { q: "To avoid a race condition in a data-fetching effect, you should:", options: ["Ignore it, it can't happen", "Track a cancelled flag or use AbortController in cleanup", "Always use setTimeout", "Remove the dependency array"], correct: 1 },
+                    { q: "useRef is best for:", options: ["Triggering re-renders on every change", "Persisting a mutable value across renders without causing re-renders", "Replacing useState entirely", "Fetching data"], correct: 1 },
+                    { q: "An empty dependency array [] in useEffect means:", options: ["It runs on every render", "It runs once after the initial render", "It never runs", "It runs before render"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write isStaleResponse(requestId, latestId) that returns true if a response's requestId does not match the latestId (i.e. it should be ignored).", functionName: "isStaleResponse", starterCode: "function isStaleResponse(requestId, latestId) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [1, 2], expected: true }, { args: [2, 2], expected: false },
+                    ]
+                }
+            },
+
+            10: {
+                mcqs: [
+                    { q: "You should generally NOT reach for useMemo when:", options: ["The computation is very expensive", "The computation is cheap and the component rarely re-renders", "There are 10,000 list items", "Doing heavy filtering"], correct: 1 },
+                    { q: "React.memo primarily helps by:", options: ["Memoizing a component's rendered output based on props", "Speeding up network requests", "Replacing Redux", "Formatting dates"], correct: 0 },
+                    { q: "List virtualization is useful when:", options: ["Rendering 5 items", "Rendering hundreds/thousands of rows, so only the visible window is in the DOM", "Styling a button", "Fetching data"], correct: 1 },
+                    { q: "useCallback is primarily used to:", options: ["Memoize a function reference between renders", "Fetch data", "Manage global state", "Handle routing"], correct: 0 },
+                ], challenge: {
+                    prompt: "Write shallowEqual(objA, objB) comparing two flat objects by their top-level key/value pairs (mirrors what React.memo does by default).", functionName: "shallowEqual", starterCode: "function shallowEqual(objA, objB) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [{ a: 1, b: 2 }, { a: 1, b: 2 }], expected: true },
+                        { args: [{ a: 1 }, { a: 2 }], expected: false },
+                    ]
+                }
+            },
+
+            11: {
+                mcqs: [
+                    { q: "TanStack Query is preferred over storing API data in Redux mainly because it provides:", options: ["Better colors", "Built-in caching, staleness tracking, refetching, and invalidation for server state", "A replacement for React itself", "Faster CSS"], correct: 1 },
+                    { q: "An optimistic update means:", options: ["Waiting for server confirmation before updating the UI", "Updating the UI immediately, before server confirmation, with a rollback path on failure", "Never updating the UI", "Ignoring server errors"], correct: 1 },
+                    { q: "Query invalidation after a mutation is used to:", options: ["Delete the cache permanently", "Mark related cached data stale so the next read refetches fresh data", "Log the user out", "Disable the query"], correct: 1 },
+                    { q: "'Server state' differs from typical client state because:", options: ["It's identical to client state", "It's owned elsewhere, can go stale, and needs caching/retry/invalidation logic", "It never changes", "It's always synchronous"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write isStale(fetchedAt, staleMs, now) returning true if (now - fetchedAt) is greater than staleMs.", functionName: "isStale", starterCode: "function isStale(fetchedAt, staleMs, now) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [1000, 500, 1600], expected: true }, { args: [1000, 500, 1300], expected: false },
+                    ]
+                }
+            },
+
+            12: {
+                mcqs: [
+                    { q: "You'd choose SSR over CSR mainly when:", options: ["The page never needs SEO or fresh data", "You need fresh, SEO-indexable content or the page depends on request-specific data like auth", "You want zero server load", "You want the smallest bundle possible always"], correct: 1 },
+                    { q: "A Server Component, by default:", options: ["Ships zero JS to the client for that piece of the tree and can access backend resources directly", "Runs only in the browser", "Requires useState", "Cannot fetch data"], correct: 0 },
+                    { q: "ISR is a good fit for content that:", options: ["Changes every millisecond", "Changes occasionally and can tolerate periodic background revalidation", "Is user-specific and private", "Never changes and never needs prebuilding"], correct: 1 },
+                    { q: "Middleware in Next.js typically runs:", options: ["Only in the browser after hydration", "On the edge/server before a request completes, e.g. for auth checks or redirects", "Only during build time", "Never"], correct: 1 },
+                ], challenge: {
+                    prompt: "Reuse the day's decision logic: write chooseRenderStrategy({needsSEO, changesOften, isUserSpecific, canPrebuild}) exactly as covered — user-specific always wins with SSR.", functionName: "chooseRenderStrategy", starterCode: "function chooseRenderStrategy({ needsSEO, changesOften, isUserSpecific, canPrebuild }) {\n  if (isUserSpecific) return \"SSR (per-request, needs auth/cookies)\";\n  // continue the logic from today's lesson\n}", testType: "call", tests: [
+                        { args: [{ needsSEO: false, changesOften: true, isUserSpecific: true, canPrebuild: false }], expected: "SSR (per-request, needs auth/cookies)" },
+                        { args: [{ needsSEO: true, changesOften: false, isUserSpecific: false, canPrebuild: true }], expected: "SSG" },
+                    ]
+                }
+            },
+
+            13: {
+                mcqs: [
+                    { q: "When explaining your own project's architecture in an interview, you should:", options: ["Recite generic best practices", "Justify specific choices you made using your actual folder structure and decisions", "Avoid mentioning trade-offs", "Only talk about the frontend"], correct: 1 },
+                    { q: "A good answer to 'why TanStack Query here but Axios there' should:", options: ["Say 'no reason, habit'", "Explain the context: server-state caching needs vs. one-off request logic", "Avoid the question", "Claim they're identical"], correct: 1 },
+                    { q: "Explaining route protection should cover:", options: ["Only the button color", "What happens on an expired/missing token and where the redirect happens", "Nothing, it's not important", "Only the database schema"], correct: 1 },
+                    { q: "The best evidence of real architecture understanding is:", options: ["Memorized definitions", "Being able to trace a real user action end-to-end through your own system", "A long list of buzzwords", "Reciting documentation"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write summarizeArchitecture(layers) that joins an array of layer names with ' -> ' to form a single trace string.", functionName: "summarizeArchitecture", starterCode: "function summarizeArchitecture(layers) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [["UI", "API", "DB"]], expected: "UI -> API -> DB" },
+                        { args: [["Client"]], expected: "Client" },
+                    ]
+                }
+            },
+
+            14: {
+                mcqs: [
+                    { q: "In a cart reducer, adding an existing item should typically:", options: ["Create a duplicate entry", "Increment its quantity on the existing entry", "Throw an error", "Remove it"], correct: 1 },
+                    { q: "The best way to prevent an unnecessary re-render from a child component is:", options: ["Avoid using props entirely", "React.memo plus stable prop references via useCallback/useMemo", "Delete the component", "Use more global variables"], correct: 1 },
+                    { q: "Tracing 'Add to Cart' end-to-end should include:", options: ["Only the button's CSS", "Event handler, state/mutation, API call, cache update, and re-render", "Just the database schema", "Nothing, it's trivial"], correct: 1 },
+                    { q: "A reducer function should be:", options: ["A pure function: same input always produces same output, no side effects", "Allowed to call fetch() directly", "Random", "Allowed to mutate the previous state directly"], correct: 0 },
+                ], challenge: {
+                    prompt: "Write cartReducer(state, action) supporting ADD_ITEM (increments qty if item exists, else adds with qty 1) and REMOVE_ITEM.", functionName: "cartReducer", starterCode: "function cartReducer(state, action) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [{ items: [] }, { type: "ADD_ITEM", item: { id: 1, name: "Tee" } }], expected: { items: [{ id: 1, name: "Tee", qty: 1 }] } },
+                        { args: [{ items: [{ id: 1, name: "Tee", qty: 1 }] }, { type: "REMOVE_ITEM", id: 1 }], expected: { items: [] } },
+                    ]
+                }
+            },
+
+            15: {
+                mcqs: [
+                    { q: "Node handles many concurrent connections on one thread mainly via:", options: ["Spawning a thread per request", "Non-blocking I/O delegated to libuv/the OS, resumed via the event loop", "Blocking every request until the previous finishes", "Ignoring slow requests"], correct: 1 },
+                    { q: "A worker thread is best used for:", options: ["Simple JSON responses", "CPU-bound work that would otherwise block the event loop", "Reading environment variables", "Logging"], correct: 1 },
+                    { q: "ESM (import/export) compared to CommonJS (require):", options: ["Is identical in every way", "Is statically analyzable, enabling tree-shaking, unlike dynamic require()", "Cannot be used in Node at all", "Is slower always"], correct: 1 },
+                    { q: "A long synchronous busy-loop on the main thread will:", options: ["Have no effect on other operations", "Block the event loop, delaying timers and I/O callbacks", "Automatically move to a worker thread", "Only affect the database"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write isBlocking(taskType) returning true for 'cpu' or 'sync-loop', and false for 'io' or 'timer'.", functionName: "isBlocking", starterCode: "function isBlocking(taskType) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: ["cpu"], expected: true }, { args: ["io"], expected: false }, { args: ["sync-loop"], expected: true }, { args: ["timer"], expected: false },
+                    ]
+                }
+            },
+
+            16: {
+                mcqs: [
+                    { q: "Express middleware must, to avoid hanging the request:", options: ["Always return JSON", "Call next() or send a response", "Be defined last", "Never touch req or res"], correct: 1 },
+                    { q: "The typical Express layering is:", options: ["Route -> Controller -> Service -> Database", "Database -> Route -> Controller", "Controller -> Database -> Route -> Service", "There is no standard layering"], correct: 0 },
+                    { q: "Centralized error-handling middleware is placed:", options: ["First, before any routes", "At the end of the middleware stack", "Inside every controller separately, never centralized", "Only in tests"], correct: 1 },
+                    { q: "Middleware runs in:", options: ["Random order", "The order it was registered with app.use()", "Reverse alphabetical order", "Parallel, all at once"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write matchRoute(routes, path) where routes is an array of {prefix, target}; return the target of the first route whose prefix the path starts with, or null if none match.", functionName: "matchRoute", starterCode: "function matchRoute(routes, path) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [[{ prefix: "/api/", target: "backend" }, { prefix: "/", target: "frontend" }], "/api/orders"], expected: "backend" },
+                        { args: [[{ prefix: "/api/", target: "backend" }], "/dashboard"], expected: null },
+                    ]
+                }
+            },
+
+            17: {
+                mcqs: [
+                    { q: "401 vs 403:", options: ["401 = forbidden, 403 = unauthenticated", "401 = authentication failed/missing, 403 = authenticated but not permitted", "They're identical", "401 only applies to POST"], correct: 1 },
+                    { q: "PUT vs PATCH:", options: ["PUT replaces the full resource, PATCH applies a partial update", "PATCH replaces the full resource, PUT is partial", "They are identical", "Neither is idempotent"], correct: 0 },
+                    { q: "An idempotent method means:", options: ["It can only be called once ever", "Calling it multiple times has the same effect as calling it once", "It always returns 200", "It never modifies data"], correct: 1 },
+                    { q: "A successful DELETE typically returns:", options: ["200 with a body", "204 No Content", "404", "500"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write isIdempotent(method) returning true for GET, PUT, DELETE, HEAD, OPTIONS and false otherwise (e.g. POST).", functionName: "isIdempotent", starterCode: "function isIdempotent(method) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: ["POST"], expected: false }, { args: ["PUT"], expected: true }, { args: ["GET"], expected: true }, { args: ["PATCH"], expected: false },
+                    ]
+                }
+            },
+
+            18: {
+                mcqs: [
+                    { q: "Storing a sensitive JWT in localStorage is risky mainly because:", options: ["It's too slow", "It's readable by any JS on the page, making it vulnerable to XSS-based theft", "localStorage doesn't exist in browsers", "It expires too fast"], correct: 1 },
+                    { q: "Why use both an access token and a refresh token?", options: ["No real reason, redundant", "Short-lived access tokens limit leak damage; a longer-lived refresh token (stored securely) issues new ones", "Refresh tokens replace passwords entirely", "Access tokens never expire"], correct: 1 },
+                    { q: "bcrypt primarily protects against:", options: ["SQL injection", "Brute-force/rainbow-table attacks on stolen password hashes", "XSS", "CSRF"], correct: 1 },
+                    { q: "HttpOnly cookies are:", options: ["Readable by JavaScript for convenience", "Not accessible to JavaScript, reducing XSS token-theft risk", "Always insecure", "The same as localStorage"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write isTokenExpired(token, now) where token = {expiresAt}. Return true if now is greater than token.expiresAt.", functionName: "isTokenExpired", starterCode: "function isTokenExpired(token, now) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [{ expiresAt: 1000 }, 1500], expected: true }, { args: [{ expiresAt: 1000 }, 500], expected: false },
+                    ]
+                }
+            },
+
+            19: {
+                mcqs: [
+                    { q: "CORS vs CSRF, the core distinction:", options: ["They are the same thing", "CORS is a browser policy on which origins can read a response; CSRF exploits auto-attached cookies to forge requests", "CORS is a database rule", "CSRF only affects GET requests"], correct: 1 },
+                    { q: "XSS differs from CSRF because XSS:", options: ["Injects malicious script to run in the victim's browser context, rather than forging a request via existing session cookies", "Is identical to CSRF", "Only happens on the server", "Cannot be prevented"], correct: 0 },
+                    { q: "A common NoSQL injection defense in MongoDB queries is:", options: ["Trusting all input as-is", "Validating/sanitizing input types and rejecting object-shaped input where a string is expected", "Disabling authentication", "Using GET for all mutations"], correct: 1 },
+                    { q: "Helmet (Express middleware) primarily helps by:", options: ["Speeding up database queries", "Setting secure HTTP headers by default", "Replacing bcrypt", "Compressing images"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write isSuspiciousInput(input) returning true if input is not a string, OR is a string that starts with '{' or contains '$' (classic NoSQL-operator injection pattern).", functionName: "isSuspiciousInput", starterCode: "function isSuspiciousInput(input) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: ["normal@example.com"], expected: false }, { args: [{ "$gt": "" }], expected: true }, { args: ['{"$ne":null}'], expected: true },
+                    ]
+                }
+            },
+
+            20: {
+                mcqs: [
+                    { q: "You'd EMBED data (rather than reference it) when it's:", options: ["Large, shared, and updated independently", "Small, bounded, always read together with the parent, and rarely updated independently", "Never — always reference", "Only for images"], correct: 1 },
+                    { q: "An index mechanically works by:", options: ["Deleting unused fields", "Maintaining a sorted structure (like a B-tree) so queries avoid a full collection scan", "Compressing the database", "Encrypting documents"], correct: 1 },
+                    { q: "$lookup in an aggregation pipeline is used to:", options: ["Delete documents", "Perform a left-outer-join-style merge between two collections", "Create an index", "Validate schema"], correct: 1 },
+                    { q: "A compound index is:", options: ["An index on a single field only", "An index spanning multiple fields, useful for queries filtering/sorting on those fields together", "Only usable in SQL", "The same as a foreign key"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write embedOrReference({isLarge, updatedIndependently, sharedAcrossDocs, alwaysReadTogether}) returning 'EMBED' if none of isLarge/updatedIndependently/sharedAcrossDocs are true and alwaysReadTogether is true, otherwise 'REFERENCE'.", functionName: "embedOrReference", starterCode: "function embedOrReference({ isLarge, updatedIndependently, sharedAcrossDocs, alwaysReadTogether }) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [{ isLarge: false, updatedIndependently: false, sharedAcrossDocs: false, alwaysReadTogether: true }], expected: "EMBED" },
+                        { args: [{ isLarge: true, updatedIndependently: true, sharedAcrossDocs: true, alwaysReadTogether: false }], expected: "REFERENCE" },
+                    ]
+                }
+            },
+
+            21: {
+                mcqs: [
+                    { q: "An unindexed query on a 10-million-document collection results in:", options: ["An instant response always", "A full collection scan (COLLSCAN), which scales poorly", "Automatic indexing", "A compile error"], correct: 1 },
+                    { q: "Deep pagination with skip() gets slow because:", options: ["skip(n) still has to walk past n documents before returning results", "skip() deletes data", "MongoDB disallows skip() past page 10", "It's actually always fast"], correct: 0 },
+                    { q: "Cursor/keyset pagination scales better than offset pagination because:", options: ["It queries 'after this id' directly instead of walking past skipped documents", "It ignores sort order", "It requires no index at all", "It's identical to offset pagination"], correct: 0 },
+                    { q: "Connection pooling matters because:", options: ["It avoids the overhead/latency of opening a new DB connection per request", "It encrypts the database", "It replaces indexes", "It's only relevant for SQL"], correct: 0 },
+                ], challenge: {
+                    prompt: "Write paginationCost(method) returning 'O(1)' for 'cursor' and 'O(n)' for 'offset'.", functionName: "paginationCost", starterCode: "function paginationCost(method) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: ["cursor"], expected: "O(1)" }, { args: ["offset"], expected: "O(n)" },
+                    ]
+                }
+            },
+
+            22: {
+                mcqs: [
+                    { q: "WHERE vs HAVING:", options: ["WHERE filters rows before grouping; HAVING filters groups after aggregation", "They are identical", "HAVING runs before WHERE", "WHERE only works with JOIN"], correct: 0 },
+                    { q: "A foreign key enforces:", options: ["Nothing, it's just documentation", "Referential integrity — you can't reference a non-existent parent row", "Automatic indexing", "Encryption"], correct: 1 },
+                    { q: "A transaction guarantees:", options: ["Faster queries", "A group of operations either all succeed or all roll back together", "Automatic backups", "Free scaling"], correct: 1 },
+                    { q: "Normalization primarily aims to:", options: ["Duplicate data for speed", "Reduce data duplication by splitting related data into linked tables", "Remove all foreign keys", "Disable joins"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write groupSum(rows, keyField, valueField) that sums valueField grouped by keyField, mirroring a SQL GROUP BY + SUM.", functionName: "groupSum", starterCode: "function groupSum(rows, keyField, valueField) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [[{ u: "a", total: 10 }, { u: "a", total: 5 }, { u: "b", total: 7 }], "u", "total"], expected: { a: 15, b: 7 } },
+                    ]
+                }
+            },
+
+            23: {
+                mcqs: [
+                    { q: "git reset vs git revert:", options: ["reset moves the branch pointer and can rewrite history; revert adds a new commit undoing changes, safe for shared branches", "They are identical", "revert deletes commits; reset never does", "Neither affects history"], correct: 0 },
+                    { q: "When you hit a merge conflict, Git marks conflicting sections with:", options: ["Nothing, it fails silently", "<<<<<<< / ======= / >>>>>>> markers in the file", "Red text only, no markers", "A popup dialog"], correct: 1 },
+                    { q: "You should avoid rebasing commits that:", options: ["Are only local and unpushed", "Have already been pushed and shared with teammates", "Are on a feature branch you own alone", "Have never been committed"], correct: 1 },
+                    { q: "git stash is used to:", options: ["Permanently delete changes", "Temporarily shelve uncommitted changes so you can switch branches cleanly", "Merge two branches", "Push to a remote"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write chooseGitCommand(scenario) returning 'revert' if scenario==='undo pushed shared commit', 'reset' if scenario==='undo local unpushed commit', 'rebase' if scenario==='linearize feature branch before merge', else 'merge'.", functionName: "chooseGitCommand", starterCode: "function chooseGitCommand(scenario) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: ["undo pushed shared commit"], expected: "revert" },
+                        { args: ["undo local unpushed commit"], expected: "reset" },
+                        { args: ["linearize feature branch before merge"], expected: "rebase" },
+                    ]
+                }
+            },
+
+            24: {
+                mcqs: [
+                    { q: "An image vs a container:", options: ["An image is the immutable blueprint; a container is a running instance of it", "They are the same thing", "A container builds images", "Images run on the network layer only"], correct: 0 },
+                    { q: "A reverse proxy (like Nginx) in front of a Node app is used for:", options: ["Nothing important", "HTTPS termination, static asset serving, and routing multiple services under one domain", "Only logging", "Replacing the database"], correct: 1 },
+                    { q: "Docker Compose is primarily used to:", options: ["Write Dockerfiles automatically", "Define and run multi-container applications together via one config file", "Replace Git", "Compile JavaScript"], correct: 1 },
+                    { q: "Environment variables in a container are typically used for:", options: ["Styling", "Injecting config/secrets without hardcoding them into the image", "Naming the container randomly", "Nothing, they're unsupported"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write routeRequest(routes, path) — same routing logic as Day 16's matchRoute, applied to a reverse-proxy scenario: return the target for the first matching prefix, or '502 Bad Gateway' if none match.", functionName: "routeRequest", starterCode: "function routeRequest(routes, path) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [[{ prefix: "/api/", target: "backend-container:5000" }, { prefix: "/", target: "frontend-container:3000" }], "/api/orders/42"], expected: "backend-container:5000" },
+                        { args: [[{ prefix: "/api/", target: "backend" }], "/unknown"], expected: "502 Bad Gateway" },
+                    ]
+                }
+            },
+
+            25: {
+                mcqs: [
+                    { q: "To prevent duplicate orders from a double-click/retry, you'd typically use:", options: ["Nothing, it's rare enough to ignore", "An idempotency key checked before processing the payment/order again", "A CAPTCHA", "A longer password"], correct: 1 },
+                    { q: "Redis commonly fits into a MERN architecture for:", options: ["Replacing MongoDB entirely", "Caching hot reads, rate limiting, and short-lived locks/idempotency keys", "Compiling React", "Sending emails"], correct: 1 },
+                    { q: "When an API becomes slow under load, a reasonable first response is:", options: ["Do nothing and wait", "Add caching for hot paths, add indexes, paginate, and set timeouts/circuit breakers", "Remove all validation", "Increase the JWT expiry time"], correct: 1 },
+                    { q: "A circuit breaker pattern helps by:", options: ["Speeding up every request", "Preventing one slow/failing dependency from cascading and taking down the whole system", "Encrypting traffic", "Replacing load balancers"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write isDuplicate(seenKeys, key) returning true if key already exists in the seenKeys array (mirrors an idempotency-key check).", functionName: "isDuplicate", starterCode: "function isDuplicate(seenKeys, key) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [["a", "b"], "a"], expected: true }, { args: [["a", "b"], "c"], expected: false },
+                    ]
+                }
+            },
+
+            26: {
+                mcqs: [
+                    { q: "A validation layer, before a controller runs, typically checks:", options: ["Nothing, controllers validate everything", "Required fields, types/formats, and that referenced IDs actually exist", "Only the response status code", "Database indexes"], correct: 1 },
+                    { q: "Role-based access checks (like requireRole('admin')) typically sit:", options: ["Before authentication middleware", "After authentication middleware (which sets req.user), before the controller", "Inside the database layer only", "In the frontend only, never the backend"], correct: 1 },
+                    { q: "A well-designed POST /orders endpoint should return, on success:", options: ["200 with no body", "201 Created with the new resource", "404", "500"], correct: 1 },
+                    { q: "Pagination on a product list endpoint mainly protects against:", options: ["SQL injection", "Returning huge, slow responses that dump the entire dataset at once", "CSRF", "XSS"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write listProducts(products, {page, pageSize, category}) returning {items, total, page, totalPages}, filtering by category first when provided.", functionName: "listProducts", starterCode: "function listProducts(products, { page = 1, pageSize = 5, category } = {}) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [[{ id: 1, category: "a" }, { id: 2, category: "b" }, { id: 3, category: "a" }], { page: 1, pageSize: 1, category: "a" }], expected: { items: [{ id: 1, category: "a" }], total: 2, page: 1, totalPages: 2 } },
+                    ]
+                }
+            },
+
+            27: {
+                mcqs: [
+                    { q: "A good debugging process starts with:", options: ["Guessing randomly", "Reproducing the issue, then isolating and forming a hypothesis before fixing", "Rewriting the whole feature", "Blaming the framework"], correct: 1 },
+                    { q: "When the frontend shows stale data after a mutation, you should first check:", options: ["Whether the mutation actually succeeded in the network tab", "The color scheme", "The favicon", "The git log"], correct: 0 },
+                    { q: "Interviewers evaluating your debugging mostly care about:", options: ["Whether you instantly know the bug", "Whether your process is systematic and you narrate your reasoning", "How fast you type", "Whether you use a specific IDE"], correct: 1 },
+                    { q: "A discount function that returns a negative price for a >100% discount reveals:", options: ["Correct behavior", "A missing edge-case clamp on the input range", "A network bug", "A CSS bug"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write getDiscountedPriceFixed(price, discountPercent) that clamps discountPercent between 0-100 (coercing strings/NaN to 0) and never returns a price below 0.", functionName: "getDiscountedPriceFixed", starterCode: "function getDiscountedPriceFixed(price, discountPercent) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [100, 20], expected: 80 }, { args: [100, 150], expected: 0 }, { args: [100, "20"], expected: 80 }, { args: [100, -10], expected: 100 },
+                    ]
+                }
+            },
+
+            28: {
+                mcqs: [
+                    { q: "A strong 'tell me about yourself' answer should be:", options: ["10 minutes covering your whole life story", "2-3 focused sentences: current focus, a standout project, what you're looking for next", "A list of every technology you've touched", "Silence, let them ask"], correct: 1 },
+                    { q: "For 'tell me about a difficult bug', the strongest structure is:", options: ["Just the fix, no context", "Symptom -> hypothesis -> isolation -> fix -> prevention", "A vague generalization", "Blaming a teammate"], correct: 1 },
+                    { q: "'What would you improve in your current project?' is best answered with:", options: ["'Nothing, it's perfect'", "One real, specific improvement, showing self-awareness", "A generic industry buzzword", "Criticizing the whole team"], correct: 1 },
+                    { q: "After a mock interview, the most valuable next step is:", options: ["Forgetting the questions you missed", "Writing down every question you couldn't answer confidently as a revision list", "Retaking the exact same mock immediately with no review", "Skipping straight to applying"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write scoreInterview(rounds) that returns the average of an array of round scores (numbers), rounded to 1 decimal place.", functionName: "scoreInterview", starterCode: "function scoreInterview(rounds) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [[80, 90, 70]], expected: 80 }, { args: [[100, 100, 100, 60]], expected: 90 },
+                    ]
+                }
+            },
+
+            29: {
+                mcqs: [
+                    { q: "Tracing 'customer clicks Add to Cart' end-to-end should include:", options: ["Only the final database write", "Every hop: event handler, optimistic UI (if any), API call, validation, DB write, response, cache/state update, re-render", "Only the CSS animation", "Nothing, it's obvious"], correct: 1 },
+                    { q: "When explaining the hardest architectural decision in your project, you should:", options: ["Avoid mentioning any trade-offs", "Explain a real trade-off you weighed and why you chose as you did", "Say there were no hard decisions", "Only mention the tech stack name"], correct: 1 },
+                    { q: "Explaining a database schema decision should focus on:", options: ["Font choices", "Why you modeled relationships/fields the way you did, referencing embed vs reference trade-offs", "Marketing copy", "Nothing, schemas are self-explanatory"], correct: 1 },
+                    { q: "A 5-10 minute project walkthrough should end with:", options: ["An abrupt stop after the architecture diagram", "What you'd improve with more time, showing reflective thinking", "A joke unrelated to the project", "Repeating the intro"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write traceStep(steps, index) that returns steps[index] if it exists, otherwise the string 'undefined step'.", functionName: "traceStep", starterCode: "function traceStep(steps, index) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [["click", "API call", "DB write"], 1], expected: "API call" },
+                        { args: [["click"], 5], expected: "undefined step" },
+                    ]
+                }
+            },
+
+            30: {
+                mcqs: [
+                    { q: "The target state after this 30-day sprint is best summarized as:", options: ["Memorizing more syntax", "Being able to explain, implement, debug, optimize, and secure a MERN app, and justify the decisions", "Only passing LeetCode-style puzzles", "Knowing every npm package that exists"], correct: 1 },
+                    { q: "After the final mock interview, questions you couldn't answer should become:", options: ["Something to forget immediately", "Your focused revision list for the following week", "Irrelevant, since the sprint is over", "Something to hide from future interviewers"], correct: 1 },
+                    { q: "A system-design round in a MERN interview most often tests:", options: ["CSS animation skills", "Your ability to reason about scaling, caching, data flow, and trade-offs", "Git commit message formatting", "Font pairing"], correct: 1 },
+                    { q: "The strongest way to demonstrate full-stack competence in an interview is:", options: ["Reciting definitions only", "Walking through a real project you built, end to end, with justified decisions", "Avoiding project-specific detail", "Only discussing frontend work"], correct: 1 },
+                ], challenge: {
+                    prompt: "Write readinessLevel(score) returning 'ready to apply' if score >= 80, otherwise 'revise weak areas first'.", functionName: "readinessLevel", starterCode: "function readinessLevel(score) {\n  // your code here\n}", testType: "call", tests: [
+                        { args: [85], expected: "ready to apply" }, { args: [60], expected: "revise weak areas first" }, { args: [80], expected: "ready to apply" },
+                    ]
+                }
+            },
+        };
+
+        // ---------- render ----------
+        const tree = document.getElementById('tree');
+        const STORAGE_KEY = 'interview-prep-app-v1';
+        let store = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        store.done = store.done || {};
+        store.code = store.code || {};
+        let currentDay = store.lastDay || 1;
+
+        function saveStore() { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); }
+
+        function isUnlocked(d) {
+            return d === 1 || !!store.done[d - 1];
+        }
+
+        function buildTree() {
+            tree.innerHTML = '';
+            WEEKS.forEach(w => {
+                const label = document.createElement('div');
+                label.className = 'week-label';
+                label.textContent = w.label;
+                tree.appendChild(label);
+                for (let d = w.range[0]; d <= w.range[1]; d++) {
+                    const day = DAYS.find(x => x.d === d);
+                    const unlocked = isUnlocked(d);
+                    const item = document.createElement('div');
+                    item.className = 'day-item' + (d === currentDay ? ' active' : '') + (store.done[d] ? ' done' : '') + (unlocked ? '' : ' locked');
+                    item.dataset.day = d;
+                    item.innerHTML = '<span class="check">' + (store.done[d] ? '✓' : '') + '</span><span class="num">day ' + String(d).padStart(2, '0') + '</span> · ' + day.title + (unlocked ? '' : ' <span class="lock">🔒</span>');
+                    item.addEventListener('click', () => selectDay(d)); // reading ahead is fine; only "next day" advancement is gated on passing the test
+                    tree.appendChild(item);
+                }
+            });
+        }
+
+        function updateProgress() {
+            const doneCount = Object.values(store.done).filter(Boolean).length;
+            document.getElementById('progress-text').textContent = doneCount + ' / 30';
+            document.getElementById('progress-fill').style.width = (doneCount / 30 * 100) + '%';
+        }
+
+        function selectDay(d) {
+            currentDay = d;
+            store.lastDay = d;
+            saveStore();
+            render();
+        }
+
+        function typewriter(el, text) {
+            el.textContent = '';
+            let i = 0;
+            const speed = Math.max(8, Math.min(28, 900 / text.length));
+            function step() {
+                if (i <= text.length) {
+                    el.textContent = text.slice(0, i);
+                    i++;
+                    setTimeout(step, speed);
+                } else {
+                    el.innerHTML = text + '<span class="cursor"></span>';
+                }
+            }
+            step();
+        }
+
+        function render() {
+            const day = DAYS.find(x => x.d === currentDay);
+            const week = WEEKS.findIndex(w => currentDay >= w.range[0] && currentDay <= w.range[1]) + 1;
+
+            document.getElementById('bc-week').textContent = week;
+            document.getElementById('bc-day').textContent = String(currentDay).padStart(2, '0');
+            typewriter(document.getElementById('day-title'), day.title);
+
+            const tagsEl = document.getElementById('day-tags');
+            tagsEl.innerHTML = '';
+            day.tags.forEach(t => {
+                const s = document.createElement('span');
+                s.className = 'tag'; s.textContent = '#' + t;
+                tagsEl.appendChild(s);
+            });
+
+            document.getElementById('day-mission').textContent = day.mission;
+            const topicsEl = document.getElementById('day-topics');
+            topicsEl.innerHTML = '';
+            day.topics.forEach(t => {
+                const li = document.createElement('li');
+                li.className = 'topic'; li.textContent = t;
+                topicsEl.appendChild(li);
+            });
+
+            document.getElementById('day-notes').textContent = day.notes;
+
+            const qEl = document.getElementById('day-questions');
+            qEl.innerHTML = '';
+            day.questions.forEach(([q, a]) => {
+                const div = document.createElement('div');
+                div.className = 'q-item';
+                div.innerHTML = '<b>Q · ' + q + '</b>' + a;
+                qEl.appendChild(div);
+            });
+
+            document.getElementById('task-name').textContent = day.task;
+            const editor = document.getElementById('editor');
+            editor.value = (store.code[currentDay] !== undefined) ? store.code[currentDay] : day.code;
+            document.getElementById('console-body').innerHTML = '<span class="muted">Press "run" to execute this snippet. console.log() output shows up here.</span>';
+            document.getElementById('run-status').textContent = 'idle';
+            document.getElementById('run-status').className = 'muted';
+
+            const markBtn = document.getElementById('markBtn');
+            markBtn.textContent = store.done[currentDay] ? '✓ passed — retake test' : 'take day test ✓';
+            markBtn.className = store.done[currentDay] ? 'passed-btn' : '';
+            document.getElementById('prevBtn').disabled = currentDay <= 1;
+            document.getElementById('nextBtn').disabled = currentDay >= 30;
+            document.getElementById('nextBtn').title = store.done[currentDay] ? '' : 'Pass today\'s test (80%+) to unlock the next day';
+
+            buildTree();
+            updateProgress();
+        }
+
+        document.getElementById('editor').addEventListener('input', (e) => {
+            store.code[currentDay] = e.target.value;
+            saveStore();
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            const day = DAYS.find(x => x.d === currentDay);
+            document.getElementById('editor').value = day.code;
+            delete store.code[currentDay];
+            saveStore();
+        });
+
+        document.getElementById('markBtn').addEventListener('click', () => {
+            openTestModal(currentDay);
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentDay > 1) selectDay(currentDay - 1); });
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentDay >= 30) return;
+            if (!store.done[currentDay]) {
+                openTestModal(currentDay, true); // nudge them straight into the test
+                return;
+            }
+            selectDay(currentDay + 1);
+        });
+
+        // ---------- day checkpoint modal ----------
+        let activeChallengeResult = null; // {allPass, results} from the last "run tests" click, for the currently open modal
+
+        function stringifyVal(v) {
+            if (typeof v === 'string') return v;
+            try { return JSON.stringify(v); } catch (e) { return String(v); }
+        }
+
+        function gradeChallenge(day) {
+            const t = TESTS[day].challenge;
+            const code = document.getElementById('challenge-editor').value;
+            try {
+                const wrapped = code + '\n;return (typeof ' + t.functionName + ' !== "undefined") ? ' + t.functionName + ' : undefined;';
+                const fn = new Function(wrapped)();
+                if (typeof fn !== 'function') {
+                    return { allPass: false, results: [], error: 'Function "' + t.functionName + '" not found — keep the function name unchanged.' };
+                }
+                let passCount = 0;
+                const results = t.tests.map(tc => {
+                    let actual, threw = false, errMsg = '';
+                    try {
+                        actual = (t.testType === 'chainCall') ? fn(...tc.args)(...tc.args2) : fn(...tc.args);
+                    } catch (e) { threw = true; errMsg = e.message; }
+                    const pass = !threw && stringifyVal(actual) === stringifyVal(tc.expected);
+                    if (pass) passCount++;
+                    return {
+                        pass, actual: threw ? undefined : actual, expected: tc.expected, threw, errMsg,
+                        argsLabel: t.testType === 'chainCall' ? JSON.stringify(tc.args) + '(' + JSON.stringify(tc.args2) + ')' : JSON.stringify(tc.args)
+                    };
+                });
+                return { allPass: passCount === t.tests.length, results, error: null };
+            } catch (err) {
+                return { allPass: false, results: [], error: err.message };
+            }
+        }
+
+        function renderChallengeResults(gradeResult) {
+            const el = document.getElementById('test-results');
+            if (gradeResult.error) {
+                el.innerHTML = '<div class="test-row fail"><span>⚠ ' + escapeHtml(gradeResult.error) + '</span></div>';
+                return;
+            }
+            el.innerHTML = gradeResult.results.map((r, i) =>
+                '<div class="test-row ' + (r.pass ? 'pass' : 'fail') + '"><span>test ' + (i + 1) + ' · ' + escapeHtml(r.argsLabel) + '</span><span>' +
+                (r.pass ? 'pass ✓' : (r.threw ? 'threw: ' + escapeHtml(r.errMsg) : 'got ' + escapeHtml(stringifyVal(r.actual)) + ', expected ' + escapeHtml(stringifyVal(r.expected))))
+                + '</span></div>'
+            ).join('');
+        }
+
+        function openTestModal(day, fromNextNudge) {
+            const dayData = DAYS.find(x => x.d === day);
+            const test = TESTS[day];
+            activeChallengeResult = null;
+
+            document.getElementById('modal-day-num').textContent = String(day).padStart(2, '0');
+            document.getElementById('modal-title').textContent = (fromNextNudge ? 'Pass this to unlock Day ' : 'Checkpoint: ') + dayData.title;
+
+            const body = document.getElementById('modal-body');
+            let html = '';
+            test.mcqs.forEach((m, qi) => {
+                html += '<div class="mcq-block" data-qi="' + qi + '"><div class="mcq-q"><b>Q' + (qi + 1) + '.</b> ' + escapeHtml(m.q) + '</div><div class="mcq-opts">';
+                m.options.forEach((opt, oi) => {
+                    html += '<label class="mcq-opt"><input type="radio" name="mcq-' + qi + '" value="' + oi + '"> <span>' + escapeHtml(opt) + '</span></label>';
+                });
+                html += '</div></div>';
+            });
+
+            html += '<div class="coding-block"><div class="mcq-q" style="margin-bottom:8px;"><b>Coding challenge.</b></div><div class="prompt">' + escapeHtml(test.challenge.prompt) + '</div>';
+            html += '<textarea id="challenge-editor" spellcheck="false">' + escapeHtml(store.challengeCode && store.challengeCode[day] !== undefined ? store.challengeCode[day] : test.challenge.starterCode) + '</textarea>';
+            html += '<div style="margin-top:8px;"><button id="runTestsBtn">▶ run tests</button></div>';
+            html += '<div class="test-results" id="test-results"></div></div>';
+
+            body.innerHTML = html;
+            document.getElementById('modal-score-area').innerHTML = '';
+            document.getElementById('modal-actions').innerHTML = '<button id="submitTestBtn" class="run">submit test</button>';
+
+            document.getElementById('runTestsBtn').addEventListener('click', () => {
+                activeChallengeResult = gradeChallenge(day);
+                renderChallengeResults(activeChallengeResult);
+                store.challengeCode = store.challengeCode || {};
+                store.challengeCode[day] = document.getElementById('challenge-editor').value;
+                saveStore();
+            });
+
+            document.getElementById('submitTestBtn').addEventListener('click', () => submitTest(day));
+
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+
+        function closeTestModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+        }
+        document.getElementById('modalCloseBtn').addEventListener('click', closeTestModal);
+        document.getElementById('modalOverlay').addEventListener('click', (e) => { if (e.target.id === 'modalOverlay') closeTestModal(); });
+
+        function submitTest(day) {
+            const test = TESTS[day];
+            let correctCount = 0;
+
+            test.mcqs.forEach((m, qi) => {
+                const chosen = document.querySelector('input[name="mcq-' + qi + '"]:checked');
+                const chosenVal = chosen ? parseInt(chosen.value, 10) : -1;
+                const block = document.querySelector('.mcq-block[data-qi="' + qi + '"]');
+                const opts = block.querySelectorAll('.mcq-opt');
+                opts.forEach((o, oi) => {
+                    o.classList.remove('correct', 'wrong');
+                    if (oi === m.correct) o.classList.add('correct');
+                    else if (oi === chosenVal) o.classList.add('wrong');
+                });
+                if (chosenVal === m.correct) correctCount++;
+            });
+
+            // run (or re-run) the coding challenge so submit always reflects the latest code
+            activeChallengeResult = gradeChallenge(day);
+            renderChallengeResults(activeChallengeResult);
+            const codingPassed = activeChallengeResult.allPass;
+            if (codingPassed) correctCount++;
+
+            const totalItems = test.mcqs.length + 1;
+            const pct = Math.round((correctCount / totalItems) * 100);
+            const passed = pct >= 80;
+
+            const scoreArea = document.getElementById('modal-score-area');
+            scoreArea.innerHTML = '<div class="score-banner ' + (passed ? 'pass' : 'fail') + '">'
+                + '<span class="big">' + pct + '% · ' + correctCount + '/' + totalItems + '</span>'
+                + (passed
+                    ? 'Passed — Day ' + String(day).padStart(2, '0') + ' complete. The next day is unlocked.'
+                    : 'Below 80% — review today\'s notes and questions, then retake the test.')
+                + '</div>';
+
+            const actions = document.getElementById('modal-actions');
+            if (passed) {
+                store.done[day] = true;
+                saveStore();
+                render();
+                actions.innerHTML = (day < 30)
+                    ? '<button id="closeAndAdvanceBtn" class="run">continue to day ' + String(day + 1).padStart(2, '0') + ' →</button><button id="closeModalBtn2">close</button>'
+                    : '<button id="closeModalBtn2" class="run">close — sprint complete 🎉</button>';
+                const advanceBtn = document.getElementById('closeAndAdvanceBtn');
+                if (advanceBtn) advanceBtn.addEventListener('click', () => { closeTestModal(); selectDay(day + 1); });
+                document.getElementById('closeModalBtn2').addEventListener('click', closeTestModal);
+            } else {
+                if (store.done[day]) { store.done[day] = false; saveStore(); render(); }
+                actions.innerHTML = '<button id="retakeBtn">retake test</button><button id="reviewBtn" class="run">review day content</button>';
+                document.getElementById('retakeBtn').addEventListener('click', () => openTestModal(day));
+                document.getElementById('reviewBtn').addEventListener('click', closeTestModal);
+            }
+        }
+
+        document.getElementById('runBtn').addEventListener('click', () => {
+            const code = document.getElementById('editor').value;
+            const out = [];
+            const statusEl = document.getElementById('run-status');
+            const bodyEl = document.getElementById('console-body');
+
+            const fakeConsole = {
+                log: (...args) => out.push({ type: 'ok', text: args.map(stringify).join(' ') }),
+                error: (...args) => out.push({ type: 'err', text: args.map(stringify).join(' ') }),
+                warn: (...args) => out.push({ type: 'ok', text: args.map(stringify).join(' ') }),
+            };
+
+            function stringify(v) {
+                if (typeof v === 'string') return v;
+                try { return JSON.stringify(v, null, 0); } catch (e) { return String(v); }
+            }
+
+            try {
+                const fn = new Function('console', code + '\n//# sourceURL=day-' + currentDay + '.js');
+                fn(fakeConsole);
+                statusEl.textContent = 'done';
+                statusEl.className = 'ok';
+            } catch (err) {
+                out.push({ type: 'err', text: err.name + ': ' + err.message });
+                statusEl.textContent = 'error';
+                statusEl.className = 'err';
+            }
+
+            if (out.length === 0) {
+                bodyEl.innerHTML = '<span class="muted">(no console output)</span>';
+            } else {
+                bodyEl.innerHTML = out.map(o => '<div class="' + o.type + '">' + escapeHtml(o.text) + '</div>').join('');
+            }
+        });
+
+        function escapeHtml(s) {
+            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        render();
+    </script>
+</body>
+
+</html>
