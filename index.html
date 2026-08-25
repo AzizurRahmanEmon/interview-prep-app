@@ -4,25 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="30 Day MERN Sprint - Comprehensive interview preparation for JavaScript, React, Node.js, Express, and MongoDB developers">
+    <meta name="keywords"
+        content="MERN, JavaScript, React, Node.js, Express, MongoDB, interview preparation, web development">
+    <meta name="author" content="Azizur">
+    <meta name="theme-color" content="#0b0d12">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;">
+    <!-- Note: For clickjacking protection, configure X-Frame-Options as HTTP header in host config (Netlify _headers, Vercel headers, etc.) -->
     <title>interview-prep-app — 30 Day MERN Sprint</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600&display=swap"
-        rel="stylesheet">
     <style>
         :root {
-            --bg: #0b0d12;
-            --panel: #12151d;
-            --panel-2: #161a24;
-            --line: #232838;
-            --text: #d7dbe6;
-            --dim: #7b8299;
-            --accent: #5ee6c4;
-            --accent-dim: #2b6e5e;
-            --amber: #ffb454;
-            --red: #ff6b6b;
-            --mono: 'JetBrains Mono', monospace;
-            --sans: 'Inter', sans-serif;
+            --bg: #0a0c10;
+            --panel: #11131a;
+            --panel-2: #151821;
+            --line: #2a3040;
+            --text: #e0e4ec;
+            --dim: #8a92a8;
+            --accent: #4ade80;
+            --accent-dim: #22c55e;
+            --accent-bg: rgba(74, 222, 128, 0.1);
+            --amber: #fbbf24;
+            --red: #f87171;
+            --purple: #a78bfa;
+            --mono: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+            --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         * {
@@ -50,6 +59,120 @@
             height: 100vh;
         }
 
+        @media (max-width: 768px) {
+            .app {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                bottom: 0;
+                width: 280px;
+                z-index: 100;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex !important;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .topbar {
+                padding: 12px 16px;
+                padding-left: 50px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .nav-foot {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-foot button {
+                width: 100%;
+            }
+
+            .modal {
+                max-height: 90vh;
+                width: 95%;
+            }
+
+            .modal-body {
+                padding: 14px 16px;
+            }
+
+            .code-toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .btns {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        .topbar h1 {
+            font-size: 20px !important;
+            max-width: 88%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 101;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-menu-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
         /* SIDEBAR */
         .sidebar {
             background: var(--panel);
@@ -73,10 +196,11 @@
 
         .brand .title {
             font-family: var(--mono);
-            font-weight: 800;
-            font-size: 15px;
+            font-weight: 700;
+            font-size: 16px;
             color: var(--accent);
-            margin-top: 4px;
+            margin-top: 6px;
+            letter-spacing: 0.5px;
         }
 
         .brand .sub {
@@ -100,18 +224,54 @@
             margin-bottom: 6px;
         }
 
-        .progress-bar {
-            height: 5px;
+        .settings-wrap {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .settings-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--dim);
+            margin-bottom: 8px;
+        }
+
+        .settings-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .settings-btn {
+            font-family: var(--mono);
+            font-size: 10px;
+            padding: 6px 10px;
+            border: 1px solid var(--line);
             background: var(--panel-2);
-            border-radius: 3px;
+            color: var(--dim);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .settings-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--panel-2);
+            border-radius: 4px;
             overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--accent-dim), var(--accent));
             width: 0%;
-            transition: width .4s;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
         }
 
         .tree {
@@ -125,49 +285,57 @@
             font-size: 10px;
             color: var(--dim);
             text-transform: uppercase;
-            letter-spacing: .08em;
-            padding: 14px 16px 6px;
+            letter-spacing: 0.1em;
+            padding: 16px 16px 8px;
+            animation: slideIn 0.3s ease-out;
         }
 
         .day-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 7px 16px;
+            gap: 10px;
+            padding: 10px 16px;
             cursor: pointer;
             font-family: var(--mono);
-            font-size: 12.5px;
+            font-size: 13px;
             color: var(--dim);
-            border-left: 2px solid transparent;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+            border-radius: 0 6px 6px 0;
+            margin-right: 8px;
         }
 
         .day-item:hover {
             background: var(--panel-2);
             color: var(--text);
+            transform: translateX(2px);
         }
 
         .day-item.active {
-            background: var(--panel-2);
+            background: var(--accent-bg);
             color: var(--accent);
-            border-left: 2px solid var(--accent);
+            border-left: 3px solid var(--accent);
+            font-weight: 500;
         }
 
         .day-item .check {
-            width: 13px;
-            height: 13px;
-            border-radius: 3px;
-            border: 1px solid var(--line);
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 1.5px solid var(--line);
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px;
+            font-size: 10px;
+            transition: all 0.2s ease;
         }
 
         .day-item.done .check {
             background: var(--accent);
             border-color: var(--accent);
-            color: #04140f;
+            color: #0a2e1f;
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
         }
 
         .day-item .num {
@@ -182,7 +350,7 @@
         }
 
         .topbar {
-            padding: 16px 28px;
+            padding: 20px 28px;
             border-bottom: 1px solid var(--line);
             background: var(--panel);
         }
@@ -191,17 +359,20 @@
             font-family: var(--mono);
             font-size: 11px;
             color: var(--dim);
+            letter-spacing: 0.5px;
         }
 
         .topbar .breadcrumb span {
             color: var(--accent);
+            font-weight: 500;
         }
 
         .topbar h1 {
             font-family: var(--mono);
-            font-size: 22px;
-            margin: 6px 0 4px;
-            font-weight: 800;
+            font-size: 24px;
+            margin: 8px 0 6px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .topbar h1 .cursor {
@@ -220,6 +391,52 @@
             }
         }
 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
         .topbar .tags {
             display: flex;
             gap: 6px;
@@ -229,17 +446,26 @@
 
         .tag {
             font-family: var(--mono);
-            font-size: 10.5px;
-            padding: 3px 8px;
+            font-size: 11px;
+            padding: 4px 10px;
             border: 1px solid var(--line);
             border-radius: 20px;
             color: var(--dim);
+            background: var(--panel-2);
+            transition: all 0.2s ease;
+        }
+
+        .tag:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-bg);
         }
 
         .content {
             flex: 1;
             overflow-y: auto;
             padding: 24px 28px 60px;
+            animation: fadeIn 0.4s ease-out;
         }
 
         .grid {
@@ -258,9 +484,16 @@
         .card {
             background: var(--panel);
             border: 1px solid var(--line);
-            border-radius: 8px;
-            padding: 18px 20px;
+            border-radius: 12px;
+            padding: 20px 24px;
             margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--line);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
         }
 
         .card h2 {
@@ -268,11 +501,12 @@
             font-size: 13px;
             color: var(--amber);
             text-transform: uppercase;
-            letter-spacing: .06em;
-            margin: 0 0 12px;
+            letter-spacing: 0.08em;
+            margin: 0 0 16px;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-weight: 600;
         }
 
         .card h2::before {
@@ -281,19 +515,19 @@
         }
 
         .card p {
-            font-size: 14px;
-            line-height: 1.65;
+            font-size: 15px;
+            line-height: 1.7;
             color: var(--text);
-            margin: 0 0 10px;
+            margin: 0 0 12px;
         }
 
         .card ul {
             margin: 0;
-            padding-left: 18px;
+            padding-left: 20px;
         }
 
         .card li {
-            font-size: 13.5px;
+            font-size: 14px;
             line-height: 1.8;
             color: var(--text);
         }
@@ -313,9 +547,16 @@
 
         .q-item {
             border-left: 2px solid var(--line);
-            padding: 8px 0 8px 12px;
-            margin-bottom: 4px;
-            font-size: 13.5px;
+            padding: 10px 0 10px 14px;
+            margin-bottom: 6px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .q-item:hover {
+            border-left-color: var(--accent);
+            background: var(--accent-bg);
+            padding-left: 16px;
         }
 
         .q-item b {
@@ -323,22 +564,24 @@
             font-family: var(--mono);
             font-size: 11px;
             display: block;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
+            font-weight: 600;
         }
 
         /* CODE PANEL */
         .code-card {
             background: var(--panel);
             border: 1px solid var(--line);
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .code-toolbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 12px 16px;
             background: var(--panel-2);
             border-bottom: 1px solid var(--line);
         }
@@ -364,46 +607,66 @@
             border: 1px solid var(--line);
             background: var(--panel);
             color: var(--text);
-            padding: 6px 12px;
-            border-radius: 5px;
+            padding: 8px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: .15s;
+            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
         button:hover {
             border-color: var(--accent);
             color: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         button.run {
             background: var(--accent);
-            color: #04140f;
+            color: #0a2e1f;
             border-color: var(--accent);
-            font-weight: 700;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
         }
 
         button.run:hover {
-            background: #7ff0d5;
-            color: #04140f;
+            background: #86efac;
+            color: #0a2e1f;
+            box-shadow: 0 6px 16px rgba(74, 222, 128, 0.4);
         }
 
         button.reset {
             color: var(--dim);
         }
 
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         textarea.editor {
             width: 100%;
             min-height: 260px;
-            background: #0d0f16;
+            background: #0a0c10;
             color: #e6e9f2;
             border: none;
             outline: none;
-            padding: 14px 16px;
+            padding: 16px;
             font-family: var(--mono);
             font-size: 13px;
             line-height: 1.6;
             resize: vertical;
             tab-size: 2;
+            transition: background 0.2s ease;
+        }
+
+        textarea.editor:focus {
+            background: #0d0f14;
         }
 
         .console {
@@ -412,13 +675,14 @@
         }
 
         .console-head {
-            padding: 8px 14px;
+            padding: 10px 16px;
             font-family: var(--mono);
             font-size: 11px;
             color: var(--dim);
             border-bottom: 1px solid var(--line);
             display: flex;
             justify-content: space-between;
+            background: var(--panel-2);
         }
 
         .console-body {
@@ -435,10 +699,12 @@
 
         .console-body .ok {
             color: var(--accent);
+            font-weight: 500;
         }
 
         .console-body .err {
             color: var(--red);
+            font-weight: 500;
         }
 
         .console-body .muted {
@@ -514,49 +780,55 @@
 
         .modal {
             width: 100%;
-            max-width: 680px;
+            max-width: 700px;
             max-height: 88vh;
             background: var(--panel);
             border: 1px solid var(--line);
-            border-radius: 10px;
+            border-radius: 16px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-out;
         }
 
         .modal-head {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            padding: 18px 20px;
+            padding: 20px 24px;
             border-bottom: 1px solid var(--line);
             background: var(--panel-2);
         }
 
         .modal-eyebrow {
             font-family: var(--mono);
-            font-size: 10.5px;
+            font-size: 11px;
             color: var(--amber);
-            letter-spacing: .08em;
+            letter-spacing: 0.1em;
+            font-weight: 600;
         }
 
         .modal-head h3 {
             font-family: var(--mono);
-            font-size: 17px;
-            margin: 4px 0 0;
+            font-size: 18px;
+            margin: 6px 0 0;
+            font-weight: 600;
         }
 
         .modal-close {
             border: none;
             background: transparent;
             color: var(--dim);
-            font-size: 16px;
-            padding: 2px 6px;
+            font-size: 18px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
 
         .modal-close:hover {
             color: var(--red);
+            background: rgba(248, 113, 113, 0.1);
         }
 
         .modal-body {
@@ -611,31 +883,38 @@
         .mcq-opt {
             display: flex;
             align-items: flex-start;
-            gap: 8px;
-            padding: 8px 10px;
+            gap: 10px;
+            padding: 10px 12px;
             border: 1px solid var(--line);
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 13px;
+            transition: all 0.2s ease;
         }
 
         .mcq-opt:hover {
-            border-color: var(--accent-dim);
+            border-color: var(--accent);
+            background: var(--accent-bg);
+            transform: translateX(2px);
         }
 
         .mcq-opt input {
-            margin-top: 2px;
+            margin-top: 3px;
             accent-color: var(--accent);
+            width: 16px;
+            height: 16px;
         }
 
         .mcq-opt.correct {
             border-color: var(--accent);
-            background: rgba(94, 230, 196, .08);
+            background: rgba(74, 222, 128, 0.15);
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.2);
         }
 
         .mcq-opt.wrong {
             border-color: var(--red);
-            background: rgba(255, 107, 107, .08);
+            background: rgba(248, 113, 113, 0.15);
+            box-shadow: 0 0 8px rgba(248, 113, 113, 0.2);
         }
 
         .coding-block .prompt {
@@ -666,57 +945,67 @@
         }
 
         .test-row {
-            padding: 6px 8px;
-            border-radius: 5px;
-            margin-bottom: 4px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
-            gap: 10px;
+            gap: 12px;
+            font-size: 12px;
         }
 
         .test-row.pass {
-            background: rgba(94, 230, 196, .08);
+            background: rgba(74, 222, 128, 0.15);
             color: var(--accent);
+            border: 1px solid rgba(74, 222, 128, 0.3);
         }
 
         .test-row.fail {
-            background: rgba(255, 107, 107, .08);
+            background: rgba(248, 113, 113, 0.15);
             color: var(--red);
+            border: 1px solid rgba(248, 113, 113, 0.3);
         }
 
         .score-banner {
-            padding: 12px 14px;
-            border-radius: 7px;
+            padding: 16px 20px;
+            border-radius: 10px;
             font-family: var(--mono);
             font-size: 13px;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
+            text-align: center;
         }
 
         .score-banner.pass {
-            background: rgba(94, 230, 196, .1);
+            background: rgba(74, 222, 128, 0.15);
             border: 1px solid var(--accent);
             color: var(--accent);
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.2);
         }
 
         .score-banner.fail {
-            background: rgba(255, 107, 107, .1);
+            background: rgba(248, 113, 113, 0.15);
             border: 1px solid var(--red);
             color: var(--red);
+            box-shadow: 0 4px 12px rgba(248, 113, 113, 0.2);
         }
 
         .score-banner .big {
-            font-size: 20px;
-            font-weight: 800;
+            font-size: 24px;
+            font-weight: 700;
             display: block;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
     </style>
 </head>
 
 <body>
 
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu" aria-expanded="false"
+        aria-controls="sidebar" type="button">☰</button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="app">
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar" role="navigation" aria-label="Day navigation">
             <div class="brand">
                 <div class="path">~/prep</div>
                 <div class="title">interview-prep-app</div>
@@ -728,11 +1017,20 @@
                     <div class="progress-fill" id="progress-fill"></div>
                 </div>
             </div>
+            <div class="settings-wrap">
+                <div class="settings-label">SETTINGS</div>
+                <div class="settings-buttons">
+                    <button class="settings-btn" id="exportBtn" title="Export progress">📤 Export</button>
+                    <button class="settings-btn" id="importBtn" title="Import progress">📥 Import</button>
+                    <button class="settings-btn" id="clearBtn" title="Clear all progress">🗑️ Clear</button>
+                </div>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+            </div>
             <div class="tree" id="tree"></div>
         </aside>
 
-        <main class="main">
-            <div class="topbar">
+        <main class="main" role="main">
+            <div class="topbar" role="banner">
                 <div class="breadcrumb">week <span id="bc-week">1</span> / day-<span id="bc-day">01</span>.js</div>
                 <h1 id="day-title">Loading<span class="cursor"></span></h1>
                 <div class="tags" id="day-tags"></div>
@@ -763,11 +1061,11 @@
                     <div class="code-toolbar">
                         <div class="fname">exercise: <span id="task-name"></span></div>
                         <div class="btns">
-                            <button class="reset" id="resetBtn">↺ reset</button>
-                            <button class="run" id="runBtn">▶ run</button>
+                            <button class="reset" id="resetBtn" aria-label="Reset code to original">↺ reset</button>
+                            <button class="run" id="runBtn" aria-label="Run code">▶ run</button>
                         </div>
                     </div>
-                    <textarea class="editor" id="editor" spellcheck="false"></textarea>
+                    <textarea class="editor" id="editor" spellcheck="false" aria-label="Code editor"></textarea>
                     <div class="console">
                         <div class="console-head"><span>console output</span><span id="run-status"
                                 class="muted">idle</span></div>
@@ -777,9 +1075,9 @@
                 </div>
 
                 <div class="nav-foot">
-                    <button id="prevBtn">← previous day</button>
-                    <button id="markBtn">take day test ✓</button>
-                    <button id="nextBtn">next day →</button>
+                    <button id="prevBtn" aria-label="Go to previous day">← previous day</button>
+                    <button id="markBtn" aria-label="Take day test">take day test ✓</button>
+                    <button id="nextBtn" aria-label="Go to next day">next day →</button>
                 </div>
             </div>
 
@@ -789,13 +1087,13 @@
         </main>
     </div>
 
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
+    <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal" role="document">
             <div class="modal-head">
                 <div>
                     <div class="modal-eyebrow">DAY <span id="modal-day-num"></span> CHECKPOINT · 80%+ REQUIRED TO
                         ADVANCE</div>
-                    <h3 id="modal-title"></h3>
+                    <h3 id="modal-title" tabindex="-1"></h3>
                 </div>
                 <button class="modal-close" id="modalCloseBtn">✕</button>
             </div>
@@ -2232,12 +2530,90 @@ if (weakest.length === 0) console.log("No topic rated 3 or below — you're read
         // ---------- render ----------
         const tree = document.getElementById('tree');
         const STORAGE_KEY = 'interview-prep-app-v1';
-        let store = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        let store;
+        try {
+            store = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        } catch (e) {
+            console.error('Corrupted progress data, resetting:', e);
+            store = {};
+        }
+
+        // Initialize all required storage fields
         store.done = store.done || {};
         store.code = store.code || {};
-        let currentDay = store.lastDay || 1;
+        store.challengeCode = store.challengeCode || {};
+        store.lastDay = store.lastDay || 1;
+        store.startedAt = store.startedAt || Date.now();
 
-        function saveStore() { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); }
+        let currentDay = store.lastDay;
+
+        // Ensure currentDay is always unlocked (in case of data corruption or manual editing)
+        if (!isUnlocked(currentDay)) {
+            // Find the highest unlocked day
+            let highestUnlocked = 1;
+            for (let i = 30; i >= 1; i--) {
+                if (isUnlocked(i)) {
+                    highestUnlocked = i;
+                    break;
+                }
+            }
+            currentDay = highestUnlocked;
+            store.lastDay = currentDay;
+            saveStore();
+        }
+
+        function saveStore() {
+            // Ensure all fields are present before saving
+            const storeToSave = {
+                done: store.done,
+                code: store.code,
+                challengeCode: store.challengeCode,
+                lastDay: store.lastDay,
+                startedAt: store.startedAt,
+                updatedAt: Date.now()
+            };
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(storeToSave));
+                console.log('Progress saved successfully');
+            } catch (e) {
+                console.error('Failed to save progress:', e);
+                alert('Failed to save progress. Storage might be full or disabled.');
+            }
+        }
+
+        function exportProgress() {
+            const dataStr = JSON.stringify(store, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            const exportFileDefaultName = 'interview-prep-progress.json';
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function importProgress(jsonString) {
+            try {
+                const imported = JSON.parse(jsonString);
+                // Validate imported data structure
+                if (imported.done && typeof imported.done === 'object' &&
+                    imported.code && typeof imported.code === 'object') {
+                    store = { ...store, ...imported };
+                    saveStore();
+                    location.reload();
+                } else {
+                    throw new Error('Invalid data structure');
+                }
+            } catch (e) {
+                alert('Failed to import progress: Invalid file format');
+            }
+        }
+
+        function clearProgress() {
+            if (confirm('Are you sure you want to clear all progress? This cannot be undone.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+        }
 
         function isUnlocked(d) {
             return d === 1 || !!store.done[d - 1];
@@ -2256,8 +2632,26 @@ if (weakest.length === 0) console.log("No topic rated 3 or below — you're read
                     const item = document.createElement('div');
                     item.className = 'day-item' + (d === currentDay ? ' active' : '') + (store.done[d] ? ' done' : '') + (unlocked ? '' : ' locked');
                     item.dataset.day = d;
+                    item.setAttribute('role', 'button');
+                    item.setAttribute('tabindex', unlocked ? '0' : '-1');
+                    item.setAttribute('aria-disabled', !unlocked);
                     item.innerHTML = '<span class="check">' + (store.done[d] ? '✓' : '') + '</span><span class="num">day ' + String(d).padStart(2, '0') + '</span> · ' + day.title + (unlocked ? '' : ' <span class="lock">🔒</span>');
-                    item.addEventListener('click', () => selectDay(d)); // reading ahead is fine; only "next day" advancement is gated on passing the test
+                    item.addEventListener('click', () => {
+                        if (unlocked) {
+                            selectDay(d);
+                        } else {
+                            showLockedNotification(d);
+                        }
+                    });
+                    item.addEventListener('keydown', (e) => {
+                        if ((e.key === 'Enter' || e.key === ' ') && unlocked) {
+                            e.preventDefault();
+                            selectDay(d);
+                        } else if ((e.key === 'Enter' || e.key === ' ') && !unlocked) {
+                            e.preventDefault();
+                            showLockedNotification(d);
+                        }
+                    });
                     tree.appendChild(item);
                 }
             });
@@ -2270,10 +2664,56 @@ if (weakest.length === 0) console.log("No topic rated 3 or below — you're read
         }
 
         function selectDay(d) {
+            // Strict navigation locking - only allow access to unlocked days
+            if (!isUnlocked(d)) {
+                showLockedNotification(d);
+                return;
+            }
             currentDay = d;
             store.lastDay = d;
             saveStore();
             render();
+        }
+
+        function showLockedNotification(day) {
+            const previousDay = day - 1;
+            const message = `Day ${String(day).padStart(2, '0')} is locked. Complete Day ${String(previousDay).padStart(2, '0')} test (80%+) to unlock it.`;
+
+            // Create a temporary notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--panel);
+                border: 1px solid var(--red);
+                border-radius: 8px;
+                padding: 16px 20px;
+                color: var(--text);
+                font-family: var(--sans);
+                font-size: 14px;
+                z-index: 1000;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+                animation: slideInRight 0.3s ease-out;
+                max-width: 350px;
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">🔒</span>
+                    <div>
+                        <div style="font-weight: 600; color: var(--red); margin-bottom: 4px;">Day Locked</div>
+                        <div style="color: var(--dim);">${message}</div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto-remove after 4 seconds
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out forwards';
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
         }
 
         function typewriter(el, text) {
@@ -2362,15 +2802,52 @@ if (weakest.length === 0) console.log("No topic rated 3 or below — you're read
             openTestModal(currentDay);
         });
 
-        document.getElementById('prevBtn').addEventListener('click', () => { if (currentDay > 1) selectDay(currentDay - 1); });
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentDay > 1) selectDay(currentDay - 1);
+        });
+
         document.getElementById('nextBtn').addEventListener('click', () => {
             if (currentDay >= 30) return;
-            if (!store.done[currentDay]) {
-                openTestModal(currentDay, true); // nudge them straight into the test
+            if (!isUnlocked(currentDay + 1)) {
+                showLockedNotification(currentDay + 1);
+                openTestModal(currentDay, true); // Nudge them to take the test
                 return;
             }
             selectDay(currentDay + 1);
         });
+
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            const isOpen = sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('active');
+            mobileMenuBtn.setAttribute('aria-expanded', isOpen);
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+        });
+
+        // Settings buttons
+        document.getElementById('exportBtn').addEventListener('click', exportProgress);
+        document.getElementById('importBtn').addEventListener('click', () => {
+            document.getElementById('importFile').click();
+        });
+        document.getElementById('importFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    importProgress(event.target.result);
+                };
+                reader.readAsText(file);
+            }
+        });
+        document.getElementById('clearBtn').addEventListener('click', clearProgress);
 
         // ---------- day checkpoint modal ----------
         let activeChallengeResult = null; // {allPass, results} from the last "run tests" click, for the currently open modal
@@ -2459,13 +2936,24 @@ if (weakest.length === 0) console.log("No topic rated 3 or below — you're read
             document.getElementById('submitTestBtn').addEventListener('click', () => submitTest(day));
 
             document.getElementById('modalOverlay').classList.add('open');
+            // Focus modal title for accessibility
+            setTimeout(() => document.getElementById('modal-title').focus(), 100);
         }
 
         function closeTestModal() {
             document.getElementById('modalOverlay').classList.remove('open');
+            // Return focus to the button that opened the modal
+            document.getElementById('markBtn').focus();
         }
         document.getElementById('modalCloseBtn').addEventListener('click', closeTestModal);
         document.getElementById('modalOverlay').addEventListener('click', (e) => { if (e.target.id === 'modalOverlay') closeTestModal(); });
+
+        // Keyboard accessibility for modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('modalOverlay').classList.contains('open')) {
+                closeTestModal();
+            }
+        });
 
         function submitTest(day) {
             const test = TESTS[day];
